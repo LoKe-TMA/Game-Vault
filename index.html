@@ -1,51 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
   <title>Game Vault</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <h2>🎮 Game Vault</h2>
-  <div id="user-info">Loading user...</div>
+  <h1>Game Vault Login</h1>
+  <button id="loginBtn">Login with Telegram</button>
 
   <script>
-    // ✅ Telegram SDK
     const tg = window.Telegram.WebApp;
-    tg.expand(); // fullscreen
 
-    // Get user data from Telegram WebApp
-    const user = tg.initDataUnsafe?.user;
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const user = tg.initDataUnsafe.user;
 
-    if (user) {
-      // Show on UI
-      document.getElementById("user-info").innerHTML = `
-        <p>👤 ${user.first_name} ${user.last_name || ""}</p>
-        <p>🆔 ${user.id}</p>
-        <p>💬 @${user.username || "N/A"}</p>
-      `;
+      if (!user) {
+        alert("No Telegram user data found!");
+        return;
+      }
 
-      // Send to backend for login/register
-      fetch("http://localhost:5000/api/auth/telegram-login", {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           telegramId: user.id,
-          username: user.username,
           firstName: user.first_name,
-          lastName: user.last_name
-        }),
-      })
-      .then(res => res.json())
-      .then(data => {
-        console.log("Login Response:", data);
-        alert("✅ Login Success, Welcome " + data.user.firstName);
-      })
-      .catch(err => console.error(err));
-    } else {
-      document.getElementById("user-info").innerText = "❌ No Telegram user data";
-    }
+          lastName: user.last_name,
+          username: user.username
+        })
+      });
+
+      const data = await res.json();
+      console.log(data);
+      alert("Login success: " + data.user.username);
+    });
   </script>
 </body>
 </html>
