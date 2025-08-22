@@ -6,35 +6,45 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <h1>Game Vault Login</h1>
-  <button id="loginBtn">Login with Telegram</button>
+  <h1>Welcome to Game Vault 🎮</h1>
+  <p id="status">Loading...</p>
 
   <script>
     const tg = window.Telegram.WebApp;
+    const user = tg.initDataUnsafe.user;
 
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-      const user = tg.initDataUnsafe.user;
-
+    async function autoLogin() {
       if (!user) {
-        alert("No Telegram user data found!");
+        document.getElementById("status").innerText = "❌ No Telegram user found";
         return;
       }
 
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          telegramId: user.id,
-          firstName: user.first_name,
-          lastName: user.last_name,
-          username: user.username
-        })
-      });
+      try {
+        const res = await fetch("http://localhost:5000/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            telegramId: user.id,
+            firstName: user.first_name,
+            lastName: user.last_name,
+            username: user.username
+          })
+        });
 
-      const data = await res.json();
-      console.log(data);
-      alert("Login success: " + data.user.username);
-    });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById("status").innerText = 
+            `✅ Logged in as ${data.user.username} | Coins: ${data.user.coins}`;
+        } else {
+          document.getElementById("status").innerText = "❌ Login failed";
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById("status").innerText = "❌ Server error";
+      }
+    }
+
+    autoLogin();
   </script>
 </body>
 </html>
