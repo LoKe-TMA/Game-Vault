@@ -1,20 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Game Vault</title>
+  <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body { font-family: Arial, sans-serif; background: #111; color: #fff; margin: 0; }
-    header { background: #222; padding: 15px; text-align: center; font-size: 20px; }
-    .tabs { display: flex; background: #333; }
-    .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; }
-    .tab.active { background: #555; font-weight: bold; }
-    .page { display: none; padding: 15px; }
-    .page.active { display: block; }
-    .coins { font-size: 18px; margin: 10px 0; color: gold; }
-  </style>
 </head>
 <body>
   <header>🎮 Game Vault</header>
@@ -28,38 +19,15 @@
   </div>
 
   <!-- Pages -->
-  <div id="store" class="page active">
-    <h2>🛒 Store</h2>
-    <div id="profile">
-      <img id="profile-pic" src="default.png" width="60" height="60" style="border-radius:50%;">
-      <div id="username">Loading...</div>
-      <div class="coins">💰 Coins: <span id="coin-balance">0</span></div>
-    </div>
-    <div id="ads">[ Banner Ads ]</div>
-    <h3>Available Games</h3>
-    <button onclick="alert('PUBG UC Store')">PUBG MOBILE</button>
-    <button onclick="alert('MLBB Diamond Store')">Mobile Legends</button>
-  </div>
+  <div id="store" class="page active"></div>
+  <div id="spin" class="page"></div>
+  <div id="tasks" class="page"></div>
+  <div id="refer" class="page"></div>
+  <div id="orders" class="page"></div>
 
-  <div id="spin" class="page">
-    <h2>🎡 Spin</h2>
-    <p>Spin Tokens: <span id="spin-balance">0</span></p>
-    <button onclick="alert('Spin!')">Spin Now</button>
-  </div>
-
-  <div id="tasks" class="page">
-    <h2>📋 Tasks</h2>
-    <ul>
-      <li>▶ Watch Short Video (Daily)</li>
-      <li>⭐ Join Telegram Channel</li>
-    </ul>
-  </div>
-
-  <div id="refer" class="page">
-    <h2>👥 Refer</h2>
-    <p>Invite friends & earn rewards!</p>
-    <button onclick="alert('Copied!')">Copy Invite Link</button>
-    <p>Total Friends: <span id="friend-count">0</span></p>
+  <script src="main.js"></script>
+</body>
+</html>
     <p>Earned Coins: <span id="refer-coins">0</span></p>
   </div>
 
