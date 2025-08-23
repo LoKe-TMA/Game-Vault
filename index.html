@@ -4,111 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Game Vault</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css">
+
+  <!-- Telegram SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Game Vault</h1>
-      <p>Redeem PUBG UC & MLBB Diamonds</p>
-    </header>
+  <header>🎮 Game Vault</header>
 
-    <div class="balance-container">
-      <div class="coin-balance">
-        <div class="coin-icon">🪙</div>
-        <div>
-          <div style="font-size: 0.8rem; color: var(--text-light);">Your Balance</div>
-          <div id="user-coins" style="font-weight: bold; font-size: 1.2rem;">0 Coins</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="nav-tabs">
-      <div class="tab active" data-tab="home">Home</div>
-      <div class="tab" data-tab="tasks">Tasks</div>
-      <div class="tab" data-tab="refer">Refer</div>
-      <div class="tab" data-tab="orders">Orders</div>
-    </div>
-
-    <!-- Home Tab -->
-    <div class="tab-content active" id="home-tab">
-      <div class="banner-ad">
-        <img id="banner-img" src="" alt="Advertisement">
-      </div>
-
-      <h2 class="section-title">PUBG UC Packages</h2>
-      <div class="game-grid" id="pubg-packages"></div>
-
-      <h2 class="section-title">MLBB Diamond Packages</h2>
-      <div class="game-grid" id="mlbb-packages"></div>
-    </div>
-
-    <!-- Tasks Tab -->
-    <div class="tab-content" id="tasks-tab">
-      <h2 class="section-title">Daily Tasks</h2>
-      <div class="task-item">
-        <div class="task-header">
-          <div class="task-title">Watch Advertisement</div>
-          <div class="task-reward">+10 Coins</div>
-        </div>
-        <div class="progress-container">
-          <div class="progress-bar" style="width: 30%;"></div>
-        </div>
-        <div style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 10px;">
-          <span id="ads-watched">6</span> / 20 completed today
-        </div>
-        <button class="task-action" id="watch-ad-btn">Watch Ad</button>
-      </div>
-
-      <h2 class="section-title">Special Tasks</h2>
-      <div id="special-tasks"></div>
-    </div>
-
-    <!-- Refer Tab -->
-    <div class="tab-content" id="refer-tab">
-      <div class="referral-stats">
-        <div class="stat-item"><div>Friends Invited</div><div id="friends-count">3</div></div>
-        <div class="stat-item"><div>Coins Earned</div><div id="referral-coins">150</div></div>
-      </div>
-      <div class="action-buttons">
-        <button class="action-button" id="invite-friend-btn">Invite Friend</button>
-        <button class="action-button" id="copy-link-btn">Copy Referral Link</button>
-      </div>
-    </div>
-
-    <!-- Orders Tab -->
-    <div class="tab-content" id="orders-tab">
-      <div id="orders-list"></div>
-    </div>
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="showPage('home')">Home</div>
+    <div class="tab" onclick="showPage('tasks')">Tasks</div>
+    <div class="tab" onclick="showPage('refer')">Refer</div>
+    <div class="tab" onclick="showPage('orders')">Orders</div>
   </div>
 
-  <!-- Order Modal -->
-  <div class="modal" id="order-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="modal-title">Purchase Package</h3>
-        <button class="close-modal">&times;</button>
-      </div>
-      <form id="order-form">
-        <input type="hidden" id="package-id">
-        <input type="hidden" id="package-game">
-        <div class="form-group">
-          <label class="form-label" for="account-id">Account ID</label>
-          <input type="text" class="form-input" id="account-id" required>
-        </div>
-        <div class="form-group" id="zone-id-group" style="display: none;">
-          <label class="form-label" for="zone-id">Zone ID (for MLBB)</label>
-          <input type="text" class="form-input" id="zone-id">
-        </div>
-        <button type="submit" class="submit-btn">Confirm Purchase</button>
-      </form>
-    </div>
-  </div>
+  <!-- Pages -->
+  <div id="home" class="page active"></div>
+  <div id="tasks" class="page"></div>
+  <div id="refer" class="page"></div>
+  <div id="orders" class="page"></div>
 
-  <!-- Toast Notification -->
-  <div class="toast" id="toast"></div>
-
+  <!-- JS -->
   <script src="main.js"></script>
 </body>
 </html>
