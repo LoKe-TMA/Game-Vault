@@ -1,44 +1,97 @@
 body {
+  margin: 0;
   font-family: Arial, sans-serif;
   background: #111;
   color: #fff;
-  margin: 0;
   text-align: center;
 }
 
 header {
   background: #222;
   padding: 15px;
-  font-size: 22px;
-  color: #0f0;
 }
 
-.tabs {
-  display: flex;
+header h1 {
+  margin: 0;
+  color: limegreen;
+}
+
+nav {
+  margin-top: 10px;
+}
+
+nav button {
   background: #333;
-}
-
-.tab {
-  flex: 1;
-  padding: 10px;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin: 0 4px;
+  border-radius: 6px;
   cursor: pointer;
 }
 
-.tab.active { 
-  background: #555; 
-  font-weight: bold; 
+nav button:hover {
+  background: #555;
 }
 
-.page { display: none; padding: 15px; }
-.page.active { display: block; }
+.page {
+  display: none;
+  padding: 20px;
+}
 
-/* Profile */
-.profile { margin: 20px 0; }
-.profile img { width: 80px; height: 80px; border-radius: 50%; border: 2px solid #444; }
-.profile h2 { margin: 10px 0 5px 0; font-size: 20px; }
-.coins { font-size: 18px; font-weight: bold; color: gold; margin-top: 8px; }
+/* --- Tasks Page --- */
+.task-summary {
+  background: #222;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  text-align: left;
+}
 
-/* Game Cards */
-.game-card { background: #222; margin: 10px auto; padding: 15px; border-radius: 12px; width: 85%; text-align: left; }
-.game-btn { background: #0a84ff; color: white; padding: 8px 14px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; }
-.game-btn:hover { background: #006be0; }
+.progress-bar {
+  background: #444;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 20px;
+  margin: 10px 0;
+}
+
+.progress-fill {
+  background: #0f0;
+  height: 100%;
+  text-align: center;
+  font-size: 12px;
+  color: #000;
+}
+
+.start-btn {
+  background: #0a84ff;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.start-btn:hover {
+  background: #006be0;
+}
+
+.join-task {
+  background: #333;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.join-task button {
+  background: #0f0;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  float: right;
+}
