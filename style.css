@@ -1,97 +1,263 @@
+:root {
+  --primary: #0f62fe;
+  --background: #111;
+  --card-bg: #1e1e1e;
+  --text-light: #aaa;
+  --border: #333;
+}
+
 body {
   margin: 0;
+  padding: 0;
   font-family: Arial, sans-serif;
-  background: #111;
-  color: #fff;
-  text-align: center;
+  background: var(--background);
+  color: white;
+}
+
+.container {
+  max-width: 500px;
+  margin: auto;
+  padding: 15px;
 }
 
 header {
-  background: #222;
-  padding: 15px;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 header h1 {
   margin: 0;
-  color: limegreen;
+  font-size: 24px;
+  color: var(--primary);
 }
 
-nav {
-  margin-top: 10px;
-}
-
-nav button {
-  background: #333;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  margin: 0 4px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-nav button:hover {
-  background: #555;
-}
-
-.page {
-  display: none;
-  padding: 20px;
-}
-
-/* --- Tasks Page --- */
-.task-summary {
-  background: #222;
-  padding: 15px;
-  border-radius: 12px;
+.balance-container {
+  background: var(--card-bg);
+  border-radius: 10px;
+  padding: 10px;
   margin-bottom: 20px;
+}
+
+.coin-balance {
+  display: flex;
+  align-items: center;
+}
+
+.coin-icon {
+  font-size: 30px;
+  margin-right: 10px;
+}
+
+.nav-tabs {
+  display: flex;
+  background: #222;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.tab {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  background: #222;
+  color: white;
+}
+
+.tab.active {
+  background: var(--primary);
+  font-weight: bold;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.banner-ad img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  margin: 15px 0 10px 0;
+  font-size: 18px;
   text-align: left;
 }
 
-.progress-bar {
-  background: #444;
-  border-radius: 8px;
-  overflow: hidden;
-  height: 20px;
-  margin: 10px 0;
+.game-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
-.progress-fill {
-  background: #0f0;
-  height: 100%;
+.game-card {
+  background: var(--card-bg);
+  padding: 12px;
+  border-radius: 10px;
   text-align: center;
-  font-size: 12px;
-  color: #000;
 }
 
-.start-btn {
-  background: #0a84ff;
-  color: white;
-  padding: 10px 16px;
+.game-btn {
+  background: var(--primary);
   border: none;
-  border-radius: 8px;
+  color: white;
+  padding: 8px;
+  margin-top: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  margin-top: 10px;
   width: 100%;
 }
 
-.start-btn:hover {
-  background: #006be0;
-}
-
-.join-task {
-  background: #333;
-  padding: 12px;
-  margin: 10px 0;
+.task-item {
+  background: var(--card-bg);
+  padding: 15px;
   border-radius: 10px;
+  margin-bottom: 15px;
   text-align: left;
 }
 
-.join-task button {
-  background: #0f0;
-  padding: 6px 12px;
+.task-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.task-title {
+  font-weight: bold;
+}
+
+.task-reward {
+  color: gold;
+}
+
+.progress-container {
+  background: #333;
+  border-radius: 5px;
+  overflow: hidden;
+  height: 8px;
+  margin: 10px 0;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--primary);
+}
+
+.task-action {
+  background: var(--primary);
   border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.referral-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.stat-item {
+  background: var(--card-bg);
+  padding: 10px;
+  border-radius: 8px;
+  flex: 1;
+  margin: 0 5px;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.action-button {
+  flex: 1;
+  margin: 5px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary);
+  color: white;
+  cursor: pointer;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-modal {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.form-group {
+  margin: 10px 0;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #111;
+  color: white;
+}
+
+.submit-btn {
+  background: var(--primary);
+  border: none;
+  color: white;
+  padding: 10px;
+  width: 100%;
+  margin-top: 10px;
   border-radius: 6px;
   cursor: pointer;
-  float: right;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  display: none;
 }
