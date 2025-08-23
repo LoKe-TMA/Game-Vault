@@ -3,44 +3,29 @@ document.addEventListener("DOMContentLoaded", () => {
   tg.expand();
   const user = tg.initDataUnsafe.user;
 
-  const dailyList = document.getElementById('daily-tasks');
-  const specialList = document.getElementById('special-tasks');
-
   const DAILY_TASK_ID = 1;
-  const DAILY_TASK_LIMIT = 10;
 
-  async function initTasksPage() {
-    if(!user) return;
+  // Daily Ad Button (static in HTML)
+  const dailyAdBtn = document.getElementById("daily-ad-btn");
+  if(dailyAdBtn){
+    const AdController = window.Adsgram.init({ blockId: "int-13300" }); // သင့် blockId ဖြည့်ပါ
+    dailyAdBtn.addEventListener("click", () => {
+      AdController.show()
+        .then(() => completeTask(DAILY_TASK_ID))
+        .catch(err => {
+          alert("Ad not watched completely.");
+          console.error(err);
+        });
+    });
+  }
 
-    try {
+  // Load Special Tasks from backend
+  async function loadSpecialTasks(){
+    try{
       const res = await fetch('https://gamevault-backend-nf5g.onrender.com/api/tasks');
       const data = await res.json();
       if(data.success){
-        // Daily Tasks
-        data.dailyTasks.forEach(task => {
-          const li = document.createElement('li');
-          li.innerHTML = `
-            <span>${task.name} - Reward: ${task.coins} coins, ${task.spins} spins</span>
-            <button class="daily-ad-btn">Watch Ad & Complete</button>
-          `;
-          dailyList.appendChild(li);
-        });
-
-        // Attach AdsGram button listener after elements exist
-        const adButtons = document.querySelectorAll('.daily-ad-btn');
-        adButtons.forEach((btn, index) => {
-          const AdController = window.Adsgram.init({ blockId: "int-13300" }); // သင့် blockId ဖြည့်ပါ
-          btn.addEventListener('click', () => {
-            AdController.show()
-              .then(() => completeTask(DAILY_TASK_ID))
-              .catch(err => {
-                alert('Ad not watched completely.');
-                console.error(err);
-              });
-          });
-        });
-
-        // Special Tasks
+        const specialList = document.getElementById('special-tasks');
         data.specialTasks.forEach(task => {
           const li = document.createElement('li');
           li.innerHTML = `
@@ -50,18 +35,18 @@ document.addEventListener("DOMContentLoaded", () => {
           specialList.appendChild(li);
         });
 
-        // Special Tasks listeners
+        // Add click listeners for special tasks
         const specialBtns = document.querySelectorAll('.special-btn');
         specialBtns.forEach(btn => {
           btn.addEventListener('click', () => completeTask(btn.dataset.id));
         });
-
       }
-    } catch(e){
-      console.error("Error loading tasks:", e);
+    }catch(e){
+      console.error("Error loading special tasks:", e);
     }
   }
 
+  // Complete a task API call
   async function completeTask(taskId){
     try {
       const res = await fetch('https://gamevault-backend-nf5g.onrender.com/api/tasks/complete', {
@@ -72,13 +57,22 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
       if(data.success){
         alert(`✅ Task completed! You earned ${data.reward.coins} coins and ${data.reward.spins} spins.`);
+
+        // Update user's coins/spins in UI if elements exist
+        const coinsEl = document.getElementById('coins');
+        const spinsEl = document.getElementById('spins');
+        if(coinsEl) coinsEl.innerText = data.user.coins;
+        if(spinsEl) spinsEl.innerText = data.user.spins;
+
       } else {
         alert(`❌ ${data.message}`);
       }
     } catch(err){
       console.error(err);
+      alert("Server error while completing task.");
     }
   }
 
-  initTasksPage();
+  // Initialize page
+  loadSpecialTasks();
 });
