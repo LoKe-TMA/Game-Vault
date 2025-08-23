@@ -11,16 +11,33 @@ async function initTasksPage() {
       // Daily Tasks
       data.dailyTasks.forEach(task => {
         const li = document.createElement('li');
-        li.innerHTML = `${task.name} - Reward: ${task.coin} coins, ${task.spin} spins 
-                        <button onclick="completeTask(${task.id})">Complete</button>`;
+        li.innerHTML = `
+          ${task.name} - Reward: ${task.coin} coins, ${task.spin} spins
+          <button id="ad-btn-${task.id}">Watch Ad & Complete</button>
+        `;
         dailyList.appendChild(li);
+
+        // AdsGram integration
+        const AdController = window.Adsgram.init({ blockId: "int-13300" }); // သင့် AdsGram blockId
+        document.getElementById(`ad-btn-${task.id}`).addEventListener('click', () => {
+          AdController.show()
+            .then(() => {
+              completeTask(task.id);
+            })
+            .catch(err => {
+              alert('Ad not watched completely. Try again.');
+              console.error(err);
+            });
+        });
       });
 
-      // Special Tasks
+      // Special Tasks (Telegram join etc.)
       data.specialTasks.forEach(task => {
         const li = document.createElement('li');
-        li.innerHTML = `${task.name} - Reward: ${task.coin} coins, ${task.spin} spins 
-                        <button onclick="completeTask(${task.id})">Complete</button>`;
+        li.innerHTML = `
+          ${task.name} - Reward: ${task.coin} coins, ${task.spin} spins
+          <button onclick="completeTask(${task.id})">Complete</button>
+        `;
         specialList.appendChild(li);
       });
     }
@@ -29,7 +46,7 @@ async function initTasksPage() {
   }
 }
 
-// Complete task function
+// Complete task function (DB update + alert)
 async function completeTask(taskId) {
   try {
     const res = await fetch('https://gamevault-backend-nf5g.onrender.com/api/tasks/complete', {
@@ -40,7 +57,7 @@ async function completeTask(taskId) {
     const data = await res.json();
     if(data.success) {
       alert(`✅ Task completed! You earned ${data.reward.coins} coins and ${data.reward.spins} spins.`);
-      // Update coins/spins in store page
+      // Update coins/spins in store/profile page
       const coinsEl = document.getElementById('coins');
       if(coinsEl) coinsEl.innerText = data.user.coins;
     } else {
@@ -51,6 +68,5 @@ async function completeTask(taskId) {
   }
 }
 
-// Initialize when tasks page loaded
+// Initialize tasks page
 initTasksPage();
-
