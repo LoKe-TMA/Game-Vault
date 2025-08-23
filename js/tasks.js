@@ -58,18 +58,17 @@ async function completeTask(taskId) {
       body: JSON.stringify({ telegramId: user.id, taskId })
     });
     const data = await res.json();
-    if(data.success) {
+    if(data.success){
       alert(`✅ Task completed! You earned ${data.reward.coins} coins and ${data.reward.spins} spins.`);
       const coinsEl = document.getElementById('coins');
       if(coinsEl) coinsEl.innerText = data.user.coins;
     } else {
       alert(`❌ ${data.message}`);
     }
-  } catch(e) {
-    console.error("Error completing task:", e);
+  } catch(err){
+    console.error(err);
   }
 }
 
 // Initialize Tasks Page
 initTasksPage();
-age();
