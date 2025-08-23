@@ -13,6 +13,22 @@
       text-align: center;
       padding: 20px;
     }
+    .profile {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .profile img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid #3b82f6;
+    }
+    .profile-info {
+      text-align: left;
+    }
     .balance-box {
       background: #1e293b;
       padding: 15px;
@@ -27,6 +43,7 @@
       color: white;
       font-size: 16px;
       cursor: pointer;
+      margin: 5px;
     }
     button:hover {
       background: #2563eb;
@@ -35,6 +52,15 @@
 </head>
 <body>
   <h1>🎮 Game Vault</h1>
+
+  <!-- Profile -->
+  <div class="profile">
+    <img id="profile-pic" src="" alt="Profile" />
+    <div class="profile-info">
+      <p id="profile-name">Loading...</p>
+      <p id="profile-username"></p>
+    </div>
+  </div>
 
   <!-- Balance -->
   <div class="balance-box">
@@ -50,6 +76,14 @@
     const tg = window.Telegram.WebApp;
     const user = tg.initDataUnsafe.user;
 
+    // Show profile info
+    document.getElementById("profile-name").innerText = 
+      user.first_name + (user.last_name ? " " + user.last_name : "");
+    document.getElementById("profile-username").innerText = 
+      user.username ? "@" + user.username : "";
+    document.getElementById("profile-pic").src = user.photo_url || "https://via.placeholder.com/60";
+
+    // Auto login
     async function loginUser() {
       try {
         const res = await fetch("https://gamevault-backend-nf5g.onrender.com/api/auth/login", {
@@ -59,7 +93,8 @@
             telegramId: user.id,
             firstName: user.first_name,
             lastName: user.last_name,
-            username: user.username
+            username: user.username,
+            photoUrl: user.photo_url
           })
         });
         const data = await res.json();
@@ -71,10 +106,8 @@
 
     function openGame(game) {
       alert("Open " + game + " store here!");
-      // later: fetch game price list from backend
     }
 
-    // Auto login when page loads
     loginUser();
   </script>
 </body>
