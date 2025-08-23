@@ -30,7 +30,7 @@ async function loginUser() {
 
     const data = await res.json();
     if (data.success && data.user) {
-      renderProfile(data.user);
+      renderHomePage(data.user);
     } else {
       alert("Login Failed ❌");
     }
@@ -40,8 +40,8 @@ async function loginUser() {
   }
 }
 
-// Render Profile on Home Page
-function renderProfile(user) {
+// Render Home Page
+function renderHomePage(user) {
   const homePage = document.getElementById("home");
   homePage.innerHTML = `
     <div class="profile">
@@ -49,6 +49,16 @@ function renderProfile(user) {
       <h2>${user.firstName} ${user.lastName || ''}</h2>
       <p>@${user.username || ''}</p>
       <div class="coins">💰 Coins: ${user.coins}</div>
+    </div>
+
+    <div class="ads">
+      <p>🔥 Banner Ads Here</p>
+    </div>
+
+    <div class="games">
+      <h3>Available Games</h3>
+      <div class="game-card">PUBG MOBILE : UC</div>
+      <div class="game-card">Mobile Legends : Diamonds</div>
     </div>
   `;
 }
