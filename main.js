@@ -67,23 +67,22 @@ function renderHomePage(user) {
 async function initTasksPage(user) {
   document.getElementById("task-balance").innerText = `Coins: ${user.coins}`;
 
-  const res = await fetch(`${API_URL}/tasks`);
+  async function loadTasks() {
+  const res = await fetch("https://gamevault-backend-nf5g.onrender.com/api/tasks");
   const data = await res.json();
-
-  const container = document.getElementById("task-list");
+  const container = document.getElementById("tasks");
   container.innerHTML = "";
 
-  if (data.success && data.tasks.length > 0) {
+  if (data.success) {
     data.tasks.forEach(task => {
-      const div = document.createElement("div");
-      div.className = "task-card";
-      div.innerHTML = `
+      let taskEl = document.createElement("div");
+      taskEl.className = "task-card";
+      taskEl.innerHTML = `
         <h3>${task.title}</h3>
         <p>Reward: ${task.reward} coins</p>
-        ${task.type === "join" ? `<a href="${task.link}" target="_blank">Join</a>` : ""}
-        <button onclick="completeTask('${user.telegramId}','${task._id}')">✅ Complete</button>
+        ${task.type === "channel" ? `<a href="${task.channelUrl}" target="_blank">Join Channel</a>` : ""}
       `;
-      container.appendChild(div);
+      container.appendChild(taskEl);
     });
   } else {
     container.innerHTML = "<p>No tasks available.</p>";
