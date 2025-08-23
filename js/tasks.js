@@ -1,3 +1,7 @@
+const tg = window.Telegram.WebApp;
+tg.expand();
+const user = tg.initDataUnsafe.user;
+
 async function initTasksPage() {
   if(!user) return;
 
@@ -12,13 +16,13 @@ async function initTasksPage() {
       data.dailyTasks.forEach(task => {
         const li = document.createElement('li');
         li.innerHTML = `
-          ${task.name} - Reward: ${task.coin} coins, ${task.spin} spins
+          <span>${task.name} - Reward: ${task.coin} coins, ${task.spin} spins</span>
           <button id="ad-btn-${task.id}">Watch Ad & Complete</button>
         `;
         dailyList.appendChild(li);
 
         // AdsGram integration
-        const AdController = window.Adsgram.init({ blockId: "int-13300" }); // သင့် AdsGram blockId
+        const AdController = window.Adsgram.init({ blockId: "int-13300" }); // သင့် blockId ဖြည့်ပါ
         document.getElementById(`ad-btn-${task.id}`).addEventListener('click', () => {
           AdController.show()
             .then(() => {
@@ -31,11 +35,11 @@ async function initTasksPage() {
         });
       });
 
-      // Special Tasks (Telegram join etc.)
+      // Special Tasks
       data.specialTasks.forEach(task => {
         const li = document.createElement('li');
         li.innerHTML = `
-          ${task.name} - Reward: ${task.coin} coins, ${task.spin} spins
+          <span>${task.name} - Reward: ${task.coin} coins, ${task.spin} spins</span>
           <button onclick="completeTask(${task.id})">Complete</button>
         `;
         specialList.appendChild(li);
@@ -46,7 +50,6 @@ async function initTasksPage() {
   }
 }
 
-// Complete task function (DB update + alert)
 async function completeTask(taskId) {
   try {
     const res = await fetch('https://gamevault-backend-nf5g.onrender.com/api/tasks/complete', {
@@ -57,7 +60,6 @@ async function completeTask(taskId) {
     const data = await res.json();
     if(data.success) {
       alert(`✅ Task completed! You earned ${data.reward.coins} coins and ${data.reward.spins} spins.`);
-      // Update coins/spins in store/profile page
       const coinsEl = document.getElementById('coins');
       if(coinsEl) coinsEl.innerText = data.user.coins;
     } else {
@@ -68,5 +70,6 @@ async function completeTask(taskId) {
   }
 }
 
-// Initialize tasks page
+// Initialize Tasks Page
 initTasksPage();
+age();
