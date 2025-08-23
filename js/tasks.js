@@ -1,14 +1,47 @@
-// insert your block id
-            const AdController = window.Adsgram.init({ blockId: "int-14145" });
-            const button = document.getElementById('ad');
-            button.addEventListener('click', () => {
-                AdController.show().then((result) => {
-                    // user watch ad till the end or close it in interstitial format
-                    // your code to reward user for rewarded format
-                    alert('Reward');
-                }).catch((result) => {
-                    // user get error during playing ad
-                    // do nothing or whatever you want
-                    alert(JSON.stringify(result, null, 4));
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("Tasks page loaded");
+
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    const user = tg.initDataUnsafe?.user;
+
+    const dailyAdBtn = document.getElementById("daily-ad-btn");
+
+    if (!window.Adsgram) {
+        console.error("Adsgram SDK not loaded!");
+        dailyAdBtn.disabled = true;
+        return;
+    }
+
+    // ✅ Initialize AdsGram with your blockId
+    const AdController = window.Adsgram.init({ blockId: "int-14145" });
+    console.log("Adsgram initialized with blockId int-14145");
+
+    dailyAdBtn.addEventListener("click", () => {
+        console.log("Ad button clicked");
+
+        AdController.show()
+            .then(() => {
+                console.log("Ad watched successfully ✅");
+
+                // Reward user in backend
+                fetch("https://gamevault-backend-nf5g.onrender.com/api/tasks/complete", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ telegramId: user?.id, taskId: "daily-ad" })
                 })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("🎉 Reward added! Coins: " + data.user.coins);
+                    } else {
+                        alert("⚠️ Server error while adding reward");
+                    }
+                });
             })
+            .catch(err => {
+                console.error("Ad error:", err);
+                alert("❌ Ad failed or closed");
+            });
+    });
+});
