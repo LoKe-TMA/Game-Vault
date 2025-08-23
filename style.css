@@ -1,263 +1,43 @@
-:root {
-  --primary: #0f62fe;
-  --background: #111;
-  --card-bg: #1e1e1e;
-  --text-light: #aaa;
-  --border: #333;
-}
-
 body {
-  margin: 0;
-  padding: 0;
   font-family: Arial, sans-serif;
-  background: var(--background);
-  color: white;
-}
-
-.container {
-  max-width: 500px;
-  margin: auto;
-  padding: 15px;
+  background: #111;
+  color: #fff;
+  margin: 0;
+  text-align: center;
 }
 
 header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 24px;
-  color: var(--primary);
-}
-
-.balance-container {
-  background: var(--card-bg);
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 20px;
-}
-
-.coin-balance {
-  display: flex;
-  align-items: center;
-}
-
-.coin-icon {
-  font-size: 30px;
-  margin-right: 10px;
-}
-
-.nav-tabs {
-  display: flex;
   background: #222;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 15px;
+  padding: 15px;
+  font-size: 22px;
+  color: #0f0;
+}
+
+.tabs {
+  display: flex;
+  background: #333;
 }
 
 .tab {
   flex: 1;
   padding: 10px;
-  text-align: center;
-  cursor: pointer;
-  background: #222;
-  color: white;
-}
-
-.tab.active {
-  background: var(--primary);
-  font-weight: bold;
-}
-
-.tab-content {
-  display: none;
-}
-
-.tab-content.active {
-  display: block;
-}
-
-.banner-ad img {
-  width: 100%;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.section-title {
-  margin: 15px 0 10px 0;
-  font-size: 18px;
-  text-align: left;
-}
-
-.game-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.game-card {
-  background: var(--card-bg);
-  padding: 12px;
-  border-radius: 10px;
-  text-align: center;
-}
-
-.game-btn {
-  background: var(--primary);
-  border: none;
-  color: white;
-  padding: 8px;
-  margin-top: 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  width: 100%;
-}
-
-.task-item {
-  background: var(--card-bg);
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 15px;
-  text-align: left;
-}
-
-.task-header {
-  display: flex;
-  justify-content: space-between;
-}
-
-.task-title {
-  font-weight: bold;
-}
-
-.task-reward {
-  color: gold;
-}
-
-.progress-container {
-  background: #333;
-  border-radius: 5px;
-  overflow: hidden;
-  height: 8px;
-  margin: 10px 0;
-}
-
-.progress-bar {
-  height: 100%;
-  background: var(--primary);
-}
-
-.task-action {
-  background: var(--primary);
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  color: white;
   cursor: pointer;
 }
 
-.referral-stats {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
+.tab.active { 
+  background: #555; 
+  font-weight: bold; 
 }
 
-.stat-item {
-  background: var(--card-bg);
-  padding: 10px;
-  border-radius: 8px;
-  flex: 1;
-  margin: 0 5px;
-}
+.page { display: none; padding: 15px; }
+.page.active { display: block; }
 
-.action-buttons {
-  display: flex;
-  justify-content: space-between;
-}
+/* Profile */
+.profile { margin: 20px 0; }
+.profile img { width: 80px; height: 80px; border-radius: 50%; border: 2px solid #444; }
+.profile h2 { margin: 10px 0 5px 0; font-size: 20px; }
+.profile p { margin: 0; font-size: 14px; color: #aaa; }
+.coins { font-size: 18px; font-weight: bold; color: gold; margin-top: 8px; }
 
-.action-button {
-  flex: 1;
-  margin: 5px;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  background: var(--primary);
-  color: white;
-  cursor: pointer;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.7);
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: var(--card-bg);
-  padding: 20px;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 400px;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.close-modal {
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-.form-group {
-  margin: 10px 0;
-}
-
-.form-label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-.form-input {
-  width: 100%;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: #111;
-  color: white;
-}
-
-.submit-btn {
-  background: var(--primary);
-  border: none;
-  color: white;
-  padding: 10px;
-  width: 100%;
-  margin-top: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.toast {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #333;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 8px;
-  display: none;
-}
+/* Ads Banner */
+.ads { background: #333; padding: 12px; margin: 20px 0; border-radius: 10px; color: #ccc; }
