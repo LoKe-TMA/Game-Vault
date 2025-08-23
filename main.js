@@ -26,73 +26,65 @@ async function loginUser() {
 
   const data = await res.json();
   if (data.success && data.user) {
-    renderStorePage(data.user);
-    renderSpinPage(data.user);
-    renderTasksPage(data.user);
-    renderReferPage(data.user);
-    renderOrdersPage(data.user);
+    // Init pages
+    initStorePage(data.user);
+    initSpinPage(data.user);
+    initTasksPage(data.user);
+    initReferPage(data.user);
+    initOrdersPage(data.user);
   }
 }
 
-// Render Pages
-function renderStorePage(user) {
-  document.getElementById("store").innerHTML = `
-    <div class="profile">
-      <img src="${user.photoUrl || 'https://via.placeholder.com/80'}" alt="profile">
-      <h2>@${user.username || user.firstName}</h2>
-      <div class="coins">💰 ${user.coins} Coins</div>
-    </div>
-
-    <div class="game-card">
-      <h3>PUBG UC</h3>
-      <button class="game-btn">Buy 60 UC</button>
-    </div>
-
-    <div class="game-card">
-      <h3>MLBB Diamonds</h3>
-      <button class="game-btn">Buy 100 Diamonds</button>
-    </div>
-  `;
-}
-
-function renderSpinPage(user) {
-  document.getElementById("spin").innerHTML = `
-    <h2>🎡 Spin Wheel</h2>
-    <p>Coming soon...</p>
-  `;
-}
-
-function renderTasksPage(user) {
-  document.getElementById("tasks").innerHTML = `
+// ---------------- Tasks Page ----------------
+function initTasksPage(user) {
+  const tasksDiv = document.getElementById("tasks");
+  tasksDiv.innerHTML = `
     <h2>📋 Daily Tasks</h2>
     <div class="ads">
       <p>Watch Short Ad (10/day limit)</p>
       <button id="ad" class="game-btn">Watch Ad</button>
+      <div id="task-msg"></div>
     </div>
   `;
 
-  // Ads setup
   const AdController = window.Adsgram.init({ blockId: "int-14145" });
-  document.getElementById("ad").addEventListener("click", () => {
-    AdController.show()
-      .then(() => alert("Reward!"))
-      .catch((err) => alert(JSON.stringify(err)));
+
+  document.getElementById("ad").addEventListener("click", async () => {
+    const start = Date.now();
+
+    try {
+      await AdController.show();
+      const elapsed = (Date.now() - start) / 1000;
+
+      if (elapsed >= 15) {
+        // Backend API call to reward coins
+        const res = await fetch("https://gamevault-backend-nf5g.onrender.com/api/tasks/reward", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ telegramId: user.id, coinsEarned: 10 }) // example: 10 coins per ad
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          user.coins = data.coins;
+          document.getElementById("task-msg").innerText = `✅ You earned 10 coins! Total: ${data.coins}`;
+          const coinsEl = document.querySelector(".coins");
+          if (coinsEl) coinsEl.innerText = `💰 ${data.coins} Coins`;
+        }
+      } else {
+        document.getElementById("task-msg").innerText = "⚠️ You closed ad too early, no reward.";
+      }
+    } catch (err) {
+      alert("Ad error: " + JSON.stringify(err));
+    }
   });
 }
 
-function renderReferPage(user) {
-  document.getElementById("refer").innerHTML = `
-    <h2>👥 Refer & Earn</h2>
-    <p>Invite friends to earn coins.</p>
-  `;
-}
-
-function renderOrdersPage(user) {
-  document.getElementById("orders").innerHTML = `
-    <h2>📦 My Orders</h2>
-    <p>No orders yet.</p>
-  `;
-}
+// Init other pages (placeholders)
+function initStorePage(user) { /* Store logic */ }
+function initSpinPage(user) { /* Spin logic */ }
+function initReferPage(user) { /* Refer logic */ }
+function initOrdersPage(user) { /* Orders logic */ }
 
 // Login on load
-if (user) loginUser();
+if(user) loginUser();
