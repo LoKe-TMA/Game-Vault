@@ -2,7 +2,7 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 const user = tg.initDataUnsafe.user;
 
-// Page switching
+// Tabs
 function showPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
@@ -10,7 +10,7 @@ function showPage(pageId) {
   document.querySelector(`.tab[onclick="showPage('${pageId}')"]`).classList.add('active');
 }
 
-// Login and fetch user
+// Login & fetch user
 async function loginUser() {
   const res = await fetch("https://gamevault-backend-nf5g.onrender.com/api/auth/login", {
     method: "POST",
@@ -26,63 +26,73 @@ async function loginUser() {
 
   const data = await res.json();
   if (data.success && data.user) {
-    initStorePage(data.user);
-    initSpinPage(data.user);
-    initTasksPage(data.user);
-    initReferPage(data.user);
-    initOrdersPage(data.user);
+    renderStorePage(data.user);
+    renderSpinPage(data.user);
+    renderTasksPage(data.user);
+    renderReferPage(data.user);
+    renderOrdersPage(data.user);
   }
 }
 
-// -------------------- Pages Init -------------------- //
-function initStorePage(user) {
-  const store = document.getElementById('store');
-  store.innerHTML = `
+// Render Pages
+function renderStorePage(user) {
+  document.getElementById("store").innerHTML = `
     <div class="profile">
-      <img src="${user.photo_url || 'default.png'}">
-      <h2>${user.username || user.firstName}</h2>
-      <p class="coins">💰 Coins: <span>${user.coins}</span></p>
+      <img src="${user.photoUrl || 'https://via.placeholder.com/80'}" alt="profile">
+      <h2>@${user.username || user.firstName}</h2>
+      <div class="coins">💰 ${user.coins} Coins</div>
     </div>
-    <div class="ads">🔔 Ads Banner Placeholder</div>
-    <div class="games">
-      <div class="game-card">
-        <h3>PUBG Mobile</h3>
-        <button class="game-btn" onclick="alert('PUBG UC Store')">View UC Packs</button>
-      </div>
-      <div class="game-card">
-        <h3>Mobile Legends</h3>
-        <button class="game-btn" onclick="alert('MLBB Diamond Store')">View Diamonds</button>
-      </div>
+
+    <div class="game-card">
+      <h3>PUBG UC</h3>
+      <button class="game-btn">Buy 60 UC</button>
+    </div>
+
+    <div class="game-card">
+      <h3>MLBB Diamonds</h3>
+      <button class="game-btn">Buy 100 Diamonds</button>
     </div>
   `;
 }
 
-function initSpinPage(user) {
-  const spin = document.getElementById('spin');
-  spin.innerHTML = `<h2>🎡 Spin</h2><p>Spin Tokens: ${user.spins}</p><button onclick="alert('Spin!')">Spin Now</button>`;
+function renderSpinPage(user) {
+  document.getElementById("spin").innerHTML = `
+    <h2>🎡 Spin Wheel</h2>
+    <p>Coming soon...</p>
+  `;
 }
 
-function initTasksPage(user) {
-  const tasks = document.getElementById('tasks');
-  tasks.innerHTML = `<h2>📋 Tasks</h2><ul>
-    <li>▶ Watch Short Video</li>
-    <li>⭐ Join Telegram Channel</li>
-  </ul>`;
+function renderTasksPage(user) {
+  document.getElementById("tasks").innerHTML = `
+    <h2>📋 Daily Tasks</h2>
+    <div class="ads">
+      <p>Watch Short Ad (10/day limit)</p>
+      <button id="ad" class="game-btn">Watch Ad</button>
+    </div>
+  `;
+
+  // Ads setup
+  const AdController = window.Adsgram.init({ blockId: "int-14145" });
+  document.getElementById("ad").addEventListener("click", () => {
+    AdController.show()
+      .then(() => alert("Reward!"))
+      .catch((err) => alert(JSON.stringify(err)));
+  });
 }
 
-function initReferPage(user) {
-  const refer = document.getElementById('refer');
-  refer.innerHTML = `<h2>👥 Refer</h2>
-    <p>Invite friends & earn rewards!</p>
-    <button onclick="alert('Copied!')">Copy Invite Link</button>
-    <p>Total Friends: 0</p>
-    <p>Earned Coins: 0</p>`;
+function renderReferPage(user) {
+  document.getElementById("refer").innerHTML = `
+    <h2>👥 Refer & Earn</h2>
+    <p>Invite friends to earn coins.</p>
+  `;
 }
 
-function initOrdersPage(user) {
-  const orders = document.getElementById('orders');
-  orders.innerHTML = `<h2>📦 Orders</h2><p>No orders yet.</p>`;
+function renderOrdersPage(user) {
+  document.getElementById("orders").innerHTML = `
+    <h2>📦 My Orders</h2>
+    <p>No orders yet.</p>
+  `;
 }
 
-// Init
-if(user) loginUser();
+// Login on load
+if (user) loginUser();
