@@ -63,5 +63,48 @@ function renderHomePage(user) {
   `;
 }
 
+// Tasks Logic 
+async function initTasksPage(user) {
+  document.getElementById("task-balance").innerText = `Coins: ${user.coins}`;
+
+  const res = await fetch(`${API_URL}/tasks`);
+  const data = await res.json();
+
+  const container = document.getElementById("task-list");
+  container.innerHTML = "";
+
+  if (data.success && data.tasks.length > 0) {
+    data.tasks.forEach(task => {
+      const div = document.createElement("div");
+      div.className = "task-card";
+      div.innerHTML = `
+        <h3>${task.title}</h3>
+        <p>Reward: ${task.reward} coins</p>
+        ${task.type === "join" ? `<a href="${task.link}" target="_blank">Join</a>` : ""}
+        <button onclick="completeTask('${user.telegramId}','${task._id}')">✅ Complete</button>
+      `;
+      container.appendChild(div);
+    });
+  } else {
+    container.innerHTML = "<p>No tasks available.</p>";
+  }
+}
+
+async function completeTask(telegramId, taskId) {
+  const res = await fetch(`${API_URL}/tasks/complete`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ telegramId, taskId })
+  });
+
+  const data = await res.json();
+  if (data.success) {
+    alert("🎁 Task Completed!");
+    document.getElementById("task-balance").innerText = `Coins: ${data.newBalance}`;
+  } else {
+    alert("Error: " + data.message);
+  }
+}
+
 // Run auto login
 if (user) loginUser();
