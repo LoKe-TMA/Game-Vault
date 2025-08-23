@@ -1,31 +1,14 @@
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("Tasks JS Loaded");
-
-    const dailyAdBtn = document.getElementById("daily-ad-btn");
-    if(!dailyAdBtn){
-        console.error("Daily Ad Button not found!");
-        return;
-    }
-
-    console.log("Daily Ad Button found");
-
-    try {
-        const AdController = window.Adsgram.init({ blockId: "int-13300" });
-        console.log("AdsGram initialized");
-
-        dailyAdBtn.addEventListener("click", () => {
-            console.log("Daily Ad Button clicked");
-            AdController.show()
-                .then(() => {
-                    console.log("Ad watched completely");
-                    alert("✅ You earned reward!");
+// insert your block id
+            const AdController = window.Adsgram.init({ blockId: "int-13300" });
+            const button = document.getElementById('ad');
+            button.addEventListener('click', () => {
+                AdController.show().then((result) => {
+                    // user watch ad till the end or close it in interstitial format
+                    // your code to reward user for rewarded format
+                    alert('Reward');
+                }).catch((result) => {
+                    // user get error during playing ad
+                    // do nothing or whatever you want
+                    alert(JSON.stringify(result, null, 4));
                 })
-                .catch(err => {
-                    console.error("Ad error:", err);
-                    alert("❌ Ad not watched completely");
-                });
-        });
-    } catch(e) {
-        console.error("AdsGram init error:", e);
-    }
-});
+            })
