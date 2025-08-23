@@ -6,60 +6,105 @@
   <title>Game Vault</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      text-align: center;
-      padding: 20px;
-    }
-    .profile {
-      margin-top: 20px;
-    }
-    img {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-    }
-    .coins {
-      margin-top: 15px;
-      font-size: 20px;
-      font-weight: bold;
-      color: gold;
-    }
+    body { font-family: Arial, sans-serif; background: #111; color: #fff; margin: 0; }
+    header { background: #222; padding: 15px; text-align: center; font-size: 20px; }
+    .tabs { display: flex; background: #333; }
+    .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; }
+    .tab.active { background: #555; font-weight: bold; }
+    .page { display: none; padding: 15px; }
+    .page.active { display: block; }
+    .coins { font-size: 18px; margin: 10px 0; color: gold; }
   </style>
 </head>
 <body>
-  <h1>🎮 Game Vault</h1>
-  <div class="profile">
-    <img id="profile-pic" src="default.png" alt="Profile Picture">
-    <h2 id="username">Loading...</h2>
-    <div class="coins">💰 Coins: <span id="coin-balance">0</span></div>
+  <header>🎮 Game Vault</header>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showPage('store')">Store</div>
+    <div class="tab" onclick="showPage('spin')">Spin</div>
+    <div class="tab" onclick="showPage('tasks')">Tasks</div>
+    <div class="tab" onclick="showPage('refer')">Refer</div>
+    <div class="tab" onclick="showPage('orders')">Orders</div>
+  </div>
+
+  <!-- Pages -->
+  <div id="store" class="page active">
+    <h2>🛒 Store</h2>
+    <div id="profile">
+      <img id="profile-pic" src="default.png" width="60" height="60" style="border-radius:50%;">
+      <div id="username">Loading...</div>
+      <div class="coins">💰 Coins: <span id="coin-balance">0</span></div>
+    </div>
+    <div id="ads">[ Banner Ads ]</div>
+    <h3>Available Games</h3>
+    <button onclick="alert('PUBG UC Store')">PUBG MOBILE</button>
+    <button onclick="alert('MLBB Diamond Store')">Mobile Legends</button>
+  </div>
+
+  <div id="spin" class="page">
+    <h2>🎡 Spin</h2>
+    <p>Spin Tokens: <span id="spin-balance">0</span></p>
+    <button onclick="alert('Spin!')">Spin Now</button>
+  </div>
+
+  <div id="tasks" class="page">
+    <h2>📋 Tasks</h2>
+    <ul>
+      <li>▶ Watch Short Video (Daily)</li>
+      <li>⭐ Join Telegram Channel</li>
+    </ul>
+  </div>
+
+  <div id="refer" class="page">
+    <h2>👥 Refer</h2>
+    <p>Invite friends & earn rewards!</p>
+    <button onclick="alert('Copied!')">Copy Invite Link</button>
+    <p>Total Friends: <span id="friend-count">0</span></p>
+    <p>Earned Coins: <span id="refer-coins">0</span></p>
+  </div>
+
+  <div id="orders" class="page">
+    <h2>📦 Orders</h2>
+    <p>No orders yet.</p>
   </div>
 
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
-
     const user = tg.initDataUnsafe.user;
 
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.tab[onclick="showPage('${pageId}')"]`).classList.add('active');
+    }
+
     async function loginUser() {
-      try {
-        const res = await fetch("https://gamevault-backend-nf5g.onrender.com/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            telegramId: user.id,
-            firstName: user.first_name,
-            lastName: user.last_name,
-            username: user.username,
-            photoUrl: user.photo_url
-          })
-        });
+      const res = await fetch("https://gamevault-backend-nf5g.onrender.com/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          telegramId: user.id,
+          firstName: user.first_name,
+          lastName: user.last_name,
+          username: user.username,
+          photoUrl: user.photo_url
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.user) {
+        document.getElementById("username").innerText = data.user.username || data.user.firstName;
+        document.getElementById("profile-pic").src = user.photo_url || "default.png";
+        document.getElementById("coin-balance").innerText = data.user.coins;
+        document.getElementById("spin-balance").innerText = data.user.spins;
+      }
+    }
 
-        const data = await res.json();
-        console.log("Login Response:", data);
-
+    if (user) loginUser();
+  </script>
+</body>
+</html>
         if (data.success && data.user) {
           document.getElementById("username").innerText =
             data.user.username || data.user.firstName || "Guest";
