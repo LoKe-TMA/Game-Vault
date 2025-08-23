@@ -11,39 +11,15 @@
   <header>🎮 Game Vault</header>
 
   <div class="tabs">
-    <div class="tab active" onclick="loadStore()">Store</div>
+    <div class="tab active" onclick="loadPage('store')">Store</div>
     <div class="tab" onclick="loadPage('spin')">Spin</div>
     <div class="tab" onclick="loadPage('tasks')">Tasks</div>
     <div class="tab" onclick="loadPage('refer')">Refer</div>
     <div class="tab" onclick="loadPage('orders')">Orders</div>
   </div>
 
-  <div id="page-container">
-    <!-- Store page content -->
-    <div class="profile">
-      <img src="assets/default.png" id="profile-img">
-      <h2 id="profile-name">Username</h2>
-      <p class="coins">💰 Coins: <span id="coins">100</span></p>
-    </div>
-
-    <div class="ads">🔔 Ads Banner Placeholder</div>
-
-    <div class="games">
-      <div class="game-card">
-        <h3>PUBG Mobile</h3>
-        <button class="game-btn" onclick="alert('PUBG UC Store')">View UC Packs</button>
-      </div>
-      <div class="game-card">
-        <h3>Mobile Legends</h3>
-        <button class="game-btn" onclick="alert('MLBB Diamond Store')">View Diamonds</button>
-      </div>
-    </div>
-  </div>
+  <div id="page-container"></div>
 
   <script src="js/main.js"></script>
-  <script src="js/spin.js"></script>
-  <script src="js/tasks.js"></script>
-  <script src="js/refer.js"></script>
-  <script src="js/orders.js"></script>
 </body>
 </html>
