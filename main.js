@@ -1,81 +1,92 @@
-const tg = window.Telegram.WebApp;
-tg.expand();
-const user = tg.initDataUnsafe.user;
+let user = { id: "demoUser123" }; // Telegram User ID ကို backend မှာယူပါ
 
-// Tabs switching
+// Page switcher
 function showPage(pageId) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(pageId).classList.add('active');
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelector(`.tab[onclick="showPage('${pageId}')"]`).classList.add('active');
-}
+  document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+  document.getElementById(pageId).style.display = "block";
 
-// Login & load pages
-async function loginUser() {
-  const res = await fetch("https://gamevault-backend-nf5g.onrender.com/api/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      telegramId: user.id,
-      firstName: user.first_name,
-      lastName: user.last_name,
-      username: user.username,
-      photoUrl: user.photo_url
-    })
-  });
-
-  const data = await res.json();
-  if (data.success && data.user) {
-    initStorePage(data.user);
+  if (pageId === "tasks") {
+    initTasksPage(user);
   }
 }
 
-// --- Store Page ---
-function initStorePage(user) {
-  const storeDiv = document.getElementById("store");
-  storeDiv.innerHTML = `
-    <div class="profile">
-      <img src="${user.photoUrl || 'assets/default.png'}" alt="Profile">
-      <h2>${user.firstName || ''} ${user.lastName || ''}</h2>
-      <div class="coins">💰 ${user.coins} Coins</div>
+// --- Tasks Page ---
+function initTasksPage(user) {
+  const tasksDiv = document.getElementById("tasks");
+
+  tasksDiv.innerHTML = `
+    <h2>📋 Today's Ad Tasks</h2>
+    <div class="task-summary">
+      <p><strong>Total Tasks:</strong> <span id="totalTasks">45</span></p>
+      <p><strong>Completed:</strong> <span id="completedTasks">0</span></p>
+      <p><strong>Remaining:</strong> <span id="remainingTasks">45</span></p>
+      <div class="progress-bar">
+        <div id="progressFill" class="progress-fill" style="width: 0%">0%</div>
+      </div>
+      <button class="start-btn" onclick="startAdTask()">▶ Start Task</button>
     </div>
 
-    <div class="game-card">
-      <h3>PUBG MOBILE: UC</h3>
-      <button class="game-btn" onclick="orderItem('PUBG', 60, 4300)">60 UC - 4300 Coins</button>
-      <button class="game-btn" onclick="orderItem('PUBG', 180, 12000)">180 UC - 12000 Coins</button>
+    <h2>📢 Channel Join Tasks</h2>
+    <div class="join-task">
+      <p>✅ Join our <a href="https://t.me/exampleChannel1" target="_blank">Channel 1</a></p>
+      <button onclick="completeJoinTask('channel1')">Confirm</button>
     </div>
-
-    <div class="game-card">
-      <h3>MLBB: Diamonds</h3>
-      <button class="game-btn" onclick="orderItem('MLBB', 86, 5000)">86 Diamonds - 5000 Coins</button>
-      <button class="game-btn" onclick="orderItem('MLBB', 172, 9500)">172 Diamonds - 9500 Coins</button>
+    <div class="join-task">
+      <p>✅ Join our <a href="https://t.me/exampleChannel2" target="_blank">Channel 2</a></p>
+      <button onclick="completeJoinTask('channel2')">Confirm</button>
     </div>
   `;
 }
 
-// --- Order function ---
-async function orderItem(game, amount, cost) {
-  if (!confirm(`Buy ${amount} ${game} for ${cost} coins?`)) return;
+// --- Ad Task ---
+let completed = 0;
+let total = 45;
 
-  const res = await fetch("https://gamevault-backend-nf5g.onrender.com/api/orders", {
+function startAdTask() {
+  alert("🎬 Ad is playing... Please wait 15 sec!");
+
+  setTimeout(async () => {
+    completed++;
+    updateTaskProgress();
+
+    // ✅ Update coins from backend
+    await fetch("https://gamevault-backend-nf5g.onrender.com/api/tasks/complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        telegramId: user.id,
+        taskType: "ad"
+      })
+    });
+
+    alert("✅ Task completed! Coins added.");
+  }, 15000);
+}
+
+function updateTaskProgress() {
+  let remaining = total - completed;
+  let percent = Math.round((completed / total) * 100);
+
+  document.getElementById("completedTasks").innerText = completed;
+  document.getElementById("remainingTasks").innerText = remaining;
+  document.getElementById("progressFill").style.width = percent + "%";
+  document.getElementById("progressFill").innerText = percent + "%";
+}
+
+// --- Channel Join Task ---
+async function completeJoinTask(channelId) {
+  await fetch("https://gamevault-backend-nf5g.onrender.com/api/tasks/complete", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       telegramId: user.id,
-      game,
-      amount,
-      cost
+      taskType: "join",
+      channel: channelId
     })
   });
 
-  const data = await res.json();
-  if (data.success) {
-    alert("✅ Order placed successfully!");
-  } else {
-    alert("❌ " + data.message);
-  }
+  alert("🎉 Channel join confirmed! Coins rewarded.");
 }
 
-// Auto login on load
-if (user) loginUser();
+// Default open page
+showPage("store");
