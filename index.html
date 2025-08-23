@@ -1,26 +1,29 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game Vault</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://sad.adsgram.ai/js/sad.min.js">
-</head>
-<body>
-  <header>🎮 Game Vault</header>
-
-  <div class="tabs">
-    <div class="tab active" onclick="loadPage('store')">Store</div>
-    <div class="tab" onclick="loadPage('spin')">Spin</div>
-    <div class="tab" onclick="loadPage('tasks')">Tasks</div>
-    <div class="tab" onclick="loadPage('refer')">Refer</div>
-    <div class="tab" onclick="loadPage('orders')">Orders</div>
-  </div>
-
-  <div id="page-container"></div>
-
-  <script src="js/main.js"></script>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Test app</title>
+        <script src="https://telegram.org/js/telegram-web-app.js"></script>
+        <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    </head>
+    <body>
+        <button id="ad">Show ad</button>
+        <script>
+            // insert your block id
+            const AdController = window.Adsgram.init({ blockId: "int-13300" });
+            const button = document.getElementById('ad');
+            button.addEventListener('click', () => {
+                AdController.show().then((result) => {
+                    // user watch ad till the end or close it in interstitial format
+                    // your code to reward user for rewarded format
+                    alert('Reward');
+                }).catch((result) => {
+                    // user get error during playing ad
+                    // do nothing or whatever you want
+                    alert(JSON.stringify(result, null, 4));
+                })
+            })
+        </script>
+    </body>
 </html>
