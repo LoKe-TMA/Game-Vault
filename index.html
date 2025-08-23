@@ -3,28 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tasks</title>
+  <title>GameVault</title>
+  <link rel="stylesheet" href="css/index.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 </head>
 <body>
-  <h2>Daily Tasks</h2>
-  <button id="ad">🎥 Watch Ad</button>
+  <!-- 🔹 Store Section (default page) -->
+  <div id="page-store">
+    <h2>Store</h2>
+    <p>Welcome to store page...</p>
+    <button onclick="goTo('tasks')">Go to Tasks</button>
+  </div>
+
+  <!-- 🔹 Tasks Section -->
+  <div id="page-tasks" style="display:none;">
+    <h2>Tasks</h2>
+    <button id="ad">🎥 Watch Ad</button>
+    <button onclick="goTo('store')">Back to Store</button>
+  </div>
 
   <script>
-    // Initialize Adsgram inside same file (avoid async loading problem)
+    // Navigation function
+    function goTo(page) {
+      document.querySelectorAll("body > div").forEach(div => div.style.display = "none");
+      document.getElementById("page-" + page).style.display = "block";
+    }
+
+    // Ads init
     const AdController = window.Adsgram.init({ blockId: "int-14145" });
 
-    const button = document.getElementById('ad');
-    button.addEventListener('click', () => {
-      AdController.show()
-        .then((result) => {
-          alert("🎉 Reward from Ad!");
-          // TODO: call backend here to reward user
-        })
-        .catch((err) => {
-          alert("❌ Ad error: " + JSON.stringify(err));
-        });
+    document.getElementById("ad").addEventListener("click", () => {
+      AdController.show().then(() => {
+        alert("🎉 Reward!");
+      }).catch(err => {
+        alert("❌ Ad Error: " + JSON.stringify(err));
+      });
     });
   </script>
 </body>
