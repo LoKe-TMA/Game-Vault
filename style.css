@@ -38,9 +38,6 @@ header {
 .profile h2 { margin: 10px 0 5px 0; font-size: 20px; }
 .coins { font-size: 18px; font-weight: bold; color: gold; margin-top: 8px; }
 
-/* Ads */
-.ads { background: #333; padding: 12px; margin: 20px 0; border-radius: 10px; color: #ccc; }
-
 /* Game Cards */
 .game-card { background: #222; margin: 10px auto; padding: 15px; border-radius: 12px; width: 85%; text-align: left; }
 .game-btn { background: #0a84ff; color: white; padding: 8px 14px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; }
