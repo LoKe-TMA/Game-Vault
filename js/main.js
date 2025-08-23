@@ -3,42 +3,49 @@ tg.expand();
 const user = tg.initDataUnsafe.user;
 const pageContainer = document.getElementById('page-container');
 
-// Load other pages
+// Load any page dynamically
 function loadPage(page) {
   fetch(`${page}.html`)
     .then(res => res.text())
     .then(html => {
       pageContainer.innerHTML = html;
+
+      // Set active tab
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelector(`.tab[onclick="loadPage('${page}')"]`).classList.add('active');
+
+      // Initialize page
       initPage(page);
     });
 }
 
-// Store page loader
-function loadStore() {
-  pageContainer.innerHTML = document.querySelector('#page-container').innerHTML; // Keep store content
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelector('.tab').classList.add('active');
-  initStore();
-}
-
-// Initialize store page
-function initStore() {
-  if(!user) return;
-  document.getElementById('profile-img').src = user.photo_url || 'assets/default.png';
-  document.getElementById('profile-name').innerText = user.username || user.first_name;
-  document.getElementById('coins').innerText = 100; // Starting coins
-}
-
-// Initialize other pages
+// Initialize content per page
 function initPage(page) {
+  if(!user) return;
+
+  if(page === 'store') {
+    document.getElementById('profile-img').src = user.photo_url || 'assets/default.png';
+    document.getElementById('profile-name').innerText = user.username || user.first_name;
+    document.getElementById('coins').innerText = 100; // Starting coins
+  }
+
   if(page === 'spin') {
     document.getElementById('spin-coins').innerText = 100;
     document.getElementById('spin-count').innerText = 0;
   }
-  // Tasks / Refer / Orders can be initialized similarly
+
+  if(page === 'tasks') {
+    // Tasks init
+  }
+
+  if(page === 'refer') {
+    // Refer init
+  }
+
+  if(page === 'orders') {
+    // Orders init
+  }
 }
 
-// Auto load store on page load
-loadStore();
+// Auto load store page
+loadPage('store');
