@@ -2,7 +2,7 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 const user = tg.initDataUnsafe.user;
 
-// Tabs
+// Tabs switching
 function showPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
@@ -10,7 +10,7 @@ function showPage(pageId) {
   document.querySelector(`.tab[onclick="showPage('${pageId}')"]`).classList.add('active');
 }
 
-// Login & fetch user
+// Login & load pages
 async function loginUser() {
   const res = await fetch("https://gamevault-backend-nf5g.onrender.com/api/auth/login", {
     method: "POST",
@@ -26,65 +26,56 @@ async function loginUser() {
 
   const data = await res.json();
   if (data.success && data.user) {
-    // Init pages
     initStorePage(data.user);
-    initSpinPage(data.user);
-    initTasksPage(data.user);
-    initReferPage(data.user);
-    initOrdersPage(data.user);
   }
 }
 
-// ---------------- Tasks Page ----------------
-function initTasksPage(user) {
-  const tasksDiv = document.getElementById("tasks");
-  tasksDiv.innerHTML = `
-    <h2>📋 Daily Tasks</h2>
-    <div class="ads">
-      <p>Watch Short Ad (10/day limit)</p>
-      <button id="ad" class="game-btn">Watch Ad</button>
-      <div id="task-msg"></div>
+// --- Store Page ---
+function initStorePage(user) {
+  const storeDiv = document.getElementById("store");
+  storeDiv.innerHTML = `
+    <div class="profile">
+      <img src="${user.photoUrl || 'assets/default.png'}" alt="Profile">
+      <h2>${user.firstName || ''} ${user.lastName || ''}</h2>
+      <div class="coins">💰 ${user.coins} Coins</div>
+    </div>
+
+    <div class="game-card">
+      <h3>PUBG MOBILE: UC</h3>
+      <button class="game-btn" onclick="orderItem('PUBG', 60, 4300)">60 UC - 4300 Coins</button>
+      <button class="game-btn" onclick="orderItem('PUBG', 180, 12000)">180 UC - 12000 Coins</button>
+    </div>
+
+    <div class="game-card">
+      <h3>MLBB: Diamonds</h3>
+      <button class="game-btn" onclick="orderItem('MLBB', 86, 5000)">86 Diamonds - 5000 Coins</button>
+      <button class="game-btn" onclick="orderItem('MLBB', 172, 9500)">172 Diamonds - 9500 Coins</button>
     </div>
   `;
-
-  const AdController = window.Adsgram.init({ blockId: "int-14145" });
-
-  document.getElementById("ad").addEventListener("click", async () => {
-    const start = Date.now();
-
-    try {
-      await AdController.show();
-      const elapsed = (Date.now() - start) / 1000;
-
-      if (elapsed >= 15) {
-        // Backend API call to reward coins
-        const res = await fetch("https://gamevault-backend-nf5g.onrender.com/api/tasks/reward", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ telegramId: user.id, coinsEarned: 10 }) // example: 10 coins per ad
-        });
-
-        const data = await res.json();
-        if (data.success) {
-          user.coins = data.coins;
-          document.getElementById("task-msg").innerText = `✅ You earned 10 coins! Total: ${data.coins}`;
-          const coinsEl = document.querySelector(".coins");
-          if (coinsEl) coinsEl.innerText = `💰 ${data.coins} Coins`;
-        }
-      } else {
-        document.getElementById("task-msg").innerText = "⚠️ You closed ad too early, no reward.";
-      }
-    } catch (err) {
-      alert("Ad error: " + JSON.stringify(err));
-    }
-  });
 }
 
-// Init other pages (placeholders)
-function initStorePage(user) { /* Store logic */ }
-function initSpinPage(user) { /* Spin logic */ }
-function initReferPage(user) { /* Refer logic */ }
-function initOrdersPage(user) { /* Orders logic */ }
+// --- Order function ---
+async function orderItem(game, amount, cost) {
+  if (!confirm(`Buy ${amount} ${game} for ${cost} coins?`)) return;
 
-// Login on load
-if(user) loginUser();
+  const res = await fetch("https://gamevault-backend-nf5g.onrender.com/api/orders", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      telegramId: user.id,
+      game,
+      amount,
+      cost
+    })
+  });
+
+  const data = await res.json();
+  if (data.success) {
+    alert("✅ Order placed successfully!");
+  } else {
+    alert("❌ " + data.message);
+  }
+}
+
+// Auto login on load
+if (user) loginUser();
