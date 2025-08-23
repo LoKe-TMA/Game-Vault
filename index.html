@@ -1,34 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Game Vault</title>
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="style.css">
-
-  <!-- Telegram SDK -->
+  <link rel="stylesheet" href="style.css" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <header>🎮 Game Vault</header>
+  <header>
+    <h1>🎮 Game Vault</h1>
+    <nav>
+      <button onclick="showPage('store')">Store</button>
+      <button onclick="showPage('tasks')">Tasks</button>
+      <button onclick="showPage('refer')">Refer</button>
+      <button onclick="showPage('orders')">Orders</button>
+    </nav>
+  </header>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <div class="tab active" onclick="showPage('store')">Store</div>
-    <div class="tab" onclick="showPage('tasks')">Tasks</div>
-    <div class="tab" onclick="showPage('refer')">Refer</div>
-    <div class="tab" onclick="showPage('orders')">Orders</div>
-  </div>
+  <main>
+    <div id="store" class="page">🏪 Store Page</div>
+    <div id="tasks" class="page"></div>
+    <div id="refer" class="page">👥 Refer Page</div>
+    <div id="orders" class="page">📦 Orders Page</div>
+  </main>
 
-  <!-- Pages -->
-  <div id="store" class="page"></div>
-  <div id="tasks" class="page"></div>
-  <div id="refer" class="page"></div>
-  <div id="orders" class="page"></div>
-
-  <!-- JS -->
   <script src="main.js"></script>
 </body>
 </html>
