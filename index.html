@@ -3,87 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Game Vault Mini App</title>
+  <title>Game Vault</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
+      background: #111;
+      color: #fff;
       text-align: center;
       padding: 20px;
     }
     .profile {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 20px;
+      margin-top: 20px;
     }
-    .profile img {
-      width: 60px;
-      height: 60px;
+    img {
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
-      border: 2px solid #3b82f6;
     }
-    .profile-info {
-      text-align: left;
-    }
-    .balance-box {
-      background: #1e293b;
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-    }
-    button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      background: #3b82f6;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      margin: 5px;
-    }
-    button:hover {
-      background: #2563eb;
+    .coins {
+      margin-top: 15px;
+      font-size: 20px;
+      font-weight: bold;
+      color: gold;
     }
   </style>
 </head>
 <body>
   <h1>🎮 Game Vault</h1>
-
-  <!-- Profile -->
   <div class="profile">
-    <img id="profile-pic" src="" alt="Profile" />
-    <div class="profile-info">
-      <p id="profile-name">Loading...</p>
-      <p id="profile-username"></p>
-    </div>
+    <img id="profile-pic" src="default.png" alt="Profile Picture">
+    <h2 id="username">Loading...</h2>
+    <div class="coins">💰 Coins: <span id="coin-balance">0</span></div>
   </div>
-
-  <!-- Balance -->
-  <div class="balance-box">
-    <p><b>Coins:</b> <span id="coin-balance">Loading...</span></p>
-  </div>
-
-  <!-- Store Section -->
-  <h2>Store</h2>
-  <button onclick="openGame('pubg')">PUBG UC</button>
-  <button onclick="openGame('mlbb')">MLBB Diamonds</button>
 
   <script>
     const tg = window.Telegram.WebApp;
+    tg.expand();
+
     const user = tg.initDataUnsafe.user;
 
-    // Show profile info
-    document.getElementById("profile-name").innerText = 
-      user.first_name + (user.last_name ? " " + user.last_name : "");
-    document.getElementById("profile-username").innerText = 
-      user.username ? "@" + user.username : "";
-    document.getElementById("profile-pic").src = user.photo_url || "https://via.placeholder.com/60";
-
-    // Auto login
     async function loginUser() {
       try {
         const res = await fetch("https://gamevault-backend-nf5g.onrender.com/api/auth/login", {
@@ -97,18 +56,30 @@
             photoUrl: user.photo_url
           })
         });
+
         const data = await res.json();
-        document.getElementById("coin-balance").innerText = data.coins;
+        console.log("Login Response:", data);
+
+        if (data.success && data.user) {
+          document.getElementById("username").innerText =
+            data.user.username || data.user.firstName || "Guest";
+          document.getElementById("profile-pic").src =
+            user.photo_url || "default.png";
+          document.getElementById("coin-balance").innerText = data.user.coins;
+        } else {
+          document.getElementById("coin-balance").innerText = "0";
+        }
+
       } catch (err) {
         console.error("Login Error:", err);
       }
     }
 
-    function openGame(game) {
-      alert("Open " + game + " store here!");
+    if (user) {
+      loginUser();
+    } else {
+      document.getElementById("username").innerText = "No Telegram User Found";
     }
-
-    loginUser();
   </script>
 </body>
 </html>
