@@ -105,26 +105,3 @@
   </script>
 </body>
 </html>
-        if (data.success && data.user) {
-          document.getElementById("username").innerText =
-            data.user.username || data.user.firstName || "Guest";
-          document.getElementById("profile-pic").src =
-            user.photo_url || "default.png";
-          document.getElementById("coin-balance").innerText = data.user.coins;
-        } else {
-          document.getElementById("coin-balance").innerText = "0";
-        }
-
-      } catch (err) {
-        console.error("Login Error:", err);
-      }
-    }
-
-    if (user) {
-      loginUser();
-    } else {
-      document.getElementById("username").innerText = "No Telegram User Found";
-    }
-  </script>
-</body>
-</html>
