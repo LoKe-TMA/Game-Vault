@@ -10,7 +10,6 @@ header {
   background: #222;
   padding: 15px;
   font-size: 22px;
-  font-weight: bold;
   color: #0f0;
 }
 
@@ -18,43 +17,31 @@ header {
   display: flex;
   background: #333;
 }
+
 .tab {
   flex: 1;
   padding: 10px;
   cursor: pointer;
 }
-.tab.active {
-  background: #555;
-  font-weight: bold;
+
+.tab.active { 
+  background: #555; 
+  font-weight: bold; 
 }
 
 .page { display: none; padding: 15px; }
 .page.active { display: block; }
 
-.profile img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-}
-.coins { color: gold; font-weight: bold; margin: 8px 0; }
+/* Profile */
+.profile { margin: 20px 0; }
+.profile img { width: 80px; height: 80px; border-radius: 50%; border: 2px solid #444; }
+.profile h2 { margin: 10px 0 5px 0; font-size: 20px; }
+.coins { font-size: 18px; font-weight: bold; color: gold; margin-top: 8px; }
 
-.game-card {
-  background: #222;
-  margin: 10px auto;
-  padding: 15px;
-  border-radius: 12px;
-  width: 85%;
-  text-align: left;
-}
-.game-btn {
-  background: #0a84ff;
-  color: white;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-.game-btn:hover { background: #006be0; }
-
+/* Ads */
 .ads { background: #333; padding: 12px; margin: 20px 0; border-radius: 10px; color: #ccc; }
+
+/* Game Cards */
+.game-card { background: #222; margin: 10px auto; padding: 15px; border-radius: 12px; width: 85%; text-align: left; }
+.game-btn { background: #0a84ff; color: white; padding: 8px 14px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+.game-btn:hover { background: #006be0; }
