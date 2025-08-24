@@ -33,24 +33,53 @@ header {
 .page.active { display: block; }
 
 
+/* Tasks Page */
+#tasks {
+  padding: 15px;
+}
+
 .task-card {
-  background: #222;
-  padding: 12px;
-  margin: 10px auto;
-  border-radius: 10px;
-  width: 90%;
+  background: #1e1e1e;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 12px;
   text-align: left;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
-.task-card h3 { margin: 5px 0; color: #0f0; }
-.task-card button {
+
+.task-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #fff;
+}
+
+.task-desc {
+  font-size: 14px;
+  color: #aaa;
+  margin-bottom: 10px;
+}
+
+.task-btn {
+  display: inline-block;
   background: #0a84ff;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
   cursor: pointer;
+  transition: 0.3s;
 }
-.task-card button:hover { background: #006be0; }
+
+.task-btn:hover {
+  background: #006be0;
+}
+
+.task-btn.done {
+  background: #2ecc71;
+  cursor: default;
+}
+
 
 
 /* Profile */
