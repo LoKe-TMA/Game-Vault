@@ -1,4 +1,4 @@
-const tg = window.Telegram.WebApp;
+GameVaultBotw.Telegram.WebApp;
 tg.expand();
 const user = tg.initDataUnsafe.user;
 
@@ -116,10 +116,10 @@ function initReferPage(user) {
   document.getElementById("ref-coins").innerText = user.referrals * 100;
 }
 function inviteFriend() {
-  tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/GameVaultBot?start=${user.id}`);
+  tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/Game_VauIt_Bot?start=${user.id}`);
 }
 function copyLink() {
-  navigator.clipboard.writeText(`https://t.me/GameVaultBot?start=${user.id}`);
+  navigator.clipboard.writeText(`https://t.me/Game_VauIt_Botrt=${user.id}`);
   alert("🔗 Link copied!");
 }
 
