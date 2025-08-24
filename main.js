@@ -137,67 +137,68 @@ async function handleAuthentication() {
  */
 
 // Task page ကို စတင်ပြင်ဆင်ရန်
-function initializeTasksPage(user) {
-  document.getElementById("task-balance").innerText = `Coins: ${user.coins}`;
-  loadTasks(); // Tasks တွေကို စတင်ခေါ်ယူ
-}
-
-// Tasks များကို Server မှခေါ်ယူပြီး UI မှာပြရန်
-async function loadTasks() {
-  const container = document.getElementById("tasks");
-  container.innerHTML = "<p>Loading tasks...</p>"; // Loading state
+async function initTasksPage(user) {
+  const taskList = document.getElementById("task-list");
+  taskList.innerHTML = "<p>Loading tasks...</p>";
 
   try {
-    const data = await apiService("/tasks"); // API service ကိုသုံးပြီးခေါ်
-    container.innerHTML = ""; // Loading message ကိုရှင်း
+    const res = await fetch("https://gamevault-backend-nf5g.onrender.com/api/tasks");
+    const data = await res.json();
 
-    if (data.success && data.tasks.length > 0) {
-      data.tasks.forEach(task => {
-        const taskEl = document.createElement("div");
-        taskEl.className = "task-card";
-        // ဒီနေရာမှာ task complete လုပ်ဖို့ button ကို ထည့်သွင်းစဉ်းစားသင့်တယ်
-        taskEl.innerHTML = `
-          <h3>${task.title}</h3>
-          <p>Reward: ${task.reward} coins</p>
-          ${task.type === "channel" ? `<a href="${task.channelUrl}" target="_blank" class="task-action-btn">Join Channel</a>` : ""}
-          <button onclick="completeTask('${task._id}')" class="task-complete-btn">Complete Task</button>
-        `;
-        container.appendChild(taskEl);
+    taskList.innerHTML = "";
+
+    data.forEach(task => {
+      const card = document.createElement("div");
+      card.className = "task-card";
+
+      const title = document.createElement("div");
+      title.className = "task-title";
+      title.innerText = task.title;
+
+      const desc = document.createElement("div");
+      desc.className = "task-desc";
+      desc.innerText = task.description;
+
+      const btn = document.createElement("button");
+      btn.className = "task-btn";
+      btn.innerText = task.type === "ad" ? "▶ Watch Ad" : "📢 Join";
+
+      btn.addEventListener("click", async () => {
+        btn.innerText = "⏳...";
+        btn.disabled = true;
+
+        // API Call to complete task
+        const complete = await fetch("https://gamevault-backend-nf5g.onrender.com/api/tasks/complete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.telegramId, taskId: task._id })
+        });
+        const result = await complete.json();
+
+        if (result.success) {
+          btn.classList.add("done");
+          btn.innerText = "✅ Done";
+          updateCoins(result.newCoins);
+          alert(`🎁 You earned ${task.reward} coins`);
+        } else {
+          btn.innerText = task.type === "ad" ? "▶ Watch Ad" : "📢 Join";
+          btn.disabled = false;
+          alert("❌ " + result.message);
+        }
       });
-    } else {
-      container.innerHTML = "<p>No tasks available at the moment.</p>";
-    }
-  } catch (error) {
-    container.innerHTML = `<p class="error">Could not load tasks. Please try again later.</p>`;
-  }
-}
 
-// Task တစ်ခုကို complete လုပ်ရန်
-async function completeTask(taskId) {
-  if (!currentUser) {
-    alert("Please login first.");
-    return;
-  }
-
-  try {
-    const data = await apiService('/tasks/complete', 'POST', {
-      telegramId: currentUser.telegramId,
-      taskId: taskId
+      card.appendChild(title);
+      card.appendChild(desc);
+      card.appendChild(btn);
+      taskList.appendChild(card);
     });
 
-    if (data.success) {
-      alert("🎁 Task Completed!");
-      currentUser.coins = data.newBalance; // Local user data ကို update လုပ်
-      document.getElementById("task-balance").innerText = `Coins: ${currentUser.coins}`; // UI ကို update လုပ်
-      // Task list ကို refresh လုပ်သင့်ရင် လုပ်နိုင်
-      // loadTasks(); 
-    } else {
-      alert(`Error: ${data.message}`);
-    }
-  } catch (error) {
-    alert(`Could not complete task: ${error.message}`);
+  } catch (err) {
+    taskList.innerHTML = "<p>Failed to load tasks</p>";
+    console.error(err);
   }
 }
+
 
 
 /**
