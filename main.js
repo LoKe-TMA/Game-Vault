@@ -40,24 +40,32 @@ function renderProfile(user) {
 
 // Init Tasks Page
 async function initTasksPage(user) {
-  const res = await fetch("https://gamevault-backend-nf5g.onrender.com/api/tasks");
-  const tasks = await res.json();
+  try {
+    const res = await fetch("https://gamevault-backend-nf5g.onrender.com/api/tasks");
+    const data = await res.json();
 
-  const taskList = document.getElementById("task-list");
-  taskList.innerHTML = "";
+    const taskList = document.getElementById("task-list");
+    taskList.innerHTML = "";
 
-  tasks.forEach(task => {
-    const div = document.createElement("div");
-    div.className = "task-card";
-    div.innerHTML = `
-      <h3>${task.title}</h3>
-      <p>${task.description}</p>
-      <button onclick="completeTask('${task._id}')">
-        ${task.type === "ad" ? "🎬 Watch Ad" : "📌 Join"}
-      </button>
-    `;
-    taskList.appendChild(div);
-  });
+    if (data.success && data.tasks.length > 0) {
+      data.tasks.forEach(task => {
+        const div = document.createElement("div");
+        div.className = "task-card";
+        div.innerHTML = `
+          <h3>${task.title}</h3>
+          <p>${task.description}</p>
+          <button onclick="completeTask('${task._id}')">
+            ${task.type === "ad" ? "🎬 Watch Ad" : "📌 Join"}
+          </button>
+        `;
+        taskList.appendChild(div);
+      });
+    } else {
+      taskList.innerHTML = "<p>No tasks available</p>";
+    }
+  } catch (err) {
+    console.error("Tasks error:", err);
+  }
 }
 
 // Complete Task & Reward Coins
@@ -72,6 +80,7 @@ async function completeTask(taskId) {
   if (data.success) {
     alert(`🎁 You earned ${data.reward} coins!`);
     document.getElementById("coin-balance").innerText = data.newBalance;
+    initTasksPage(user); // refresh tasks after completion
   } else {
     alert("⚠️ " + data.message);
   }
