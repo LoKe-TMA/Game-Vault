@@ -13,39 +13,6 @@ header {
   color: #0f0;
 }
 
-/* Profile Section */
-.profile {
-  margin: 20px 0;
-}
-.profile img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 2px solid #444;
-}
-.profile h2 {
-  margin: 10px 0 5px 0;
-  font-size: 20px;
-}
-.coins {
-  font-size: 18px;
-  font-weight: bold;
-  color: gold;
-  margin-top: 8px;
-}
-
-/* Ads Banner */
-.ads {
-  background: #222;
-  padding: 15px;
-  border-radius: 12px;
-  margin: 15px auto;
-  width: 85%;
-  text-align: center;
-  color: #aaa;
-}
-
-
 .tabs {
   display: flex;
   background: #333;
@@ -57,70 +24,46 @@ header {
   cursor: pointer;
 }
 
-.tab.active { 
-  background: #555; 
-  font-weight: bold; 
+.tab.active {
+  background: #555;
+  font-weight: bold;
 }
 
 .page { display: none; padding: 15px; }
 .page.active { display: block; }
 
-
-/* Tasks Page */
-#tasks {
-  padding: 15px;
+/* Loading */
+.loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 20px;
+  background: #000;
+  color: #0f0;
 }
-
-.task-card {
-  background: #1e1e1e;
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 12px;
-  text-align: left;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-}
-
-.task-title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 6px;
-  color: #fff;
-}
-
-.task-desc {
-  font-size: 14px;
-  color: #aaa;
-  margin-bottom: 10px;
-}
-
-.task-btn {
-  display: inline-block;
-  background: #0a84ff;
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.task-btn:hover {
-  background: #006be0;
-}
-
-.task-btn.done {
-  background: #2ecc71;
-  cursor: default;
-}
-
-
 
 /* Profile */
-.profile { margin: 20px 0; }
 .profile img { width: 80px; height: 80px; border-radius: 50%; border: 2px solid #444; }
-.profile h2 { margin: 10px 0 5px 0; font-size: 20px; }
-.profile p { margin: 0; font-size: 14px; color: #aaa; }
-.coins { font-size: 18px; font-weight: bold; color: gold; margin-top: 8px; }
+.profile h2 { margin: 10px 0 5px; }
 
-/* Ads Banner */
-.ads { background: #333; padding: 12px; margin: 20px 0; border-radius: 10px; color: #ccc; }
+/* Banner */
+.banner img { width: 90%; max-width: 400px; margin: 15px auto; border-radius: 10px; }
+
+/* Game Card */
+.game-card {
+  background: #222;
+  margin: 10px auto;
+  padding: 15px;
+  border-radius: 12px;
+  width: 85%;
+  text-align: center;
+}
+.game-card button {
+  background: #0a84ff;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
