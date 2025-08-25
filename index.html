@@ -1,49 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Vault</title>
-    <link rel="stylesheet" href="style.css">
-  <!-- Telegram Web App SDK -->
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Vault</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <!-- Loading Page -->
-    <div id="loading">
-        <div class="loader"></div>
-        <p>Loading Game Vault...</p>
-    </div>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loader"></div>
+    <p>Loading Game Vault...</p>
+  </div>
 
-    <!-- Home Page -->
-    <div id="home" class="hidden">
-        <div class="profile">
-            <img id="profile-photo" src="default-avatar.png" alt="Avatar">
-            <h3 id="profile-name"></h3>
-            <p id="profile-username"></p>
-            <p>Balance: <span id="coin-balance">0 Coins</span></p>
+  <!-- Dashboard -->
+  <div id="app" class="hidden">
+    <!-- Header -->
+    <header>
+      <div id="profile">
+        <img id="profile-photo" src="assets/default-avatar.png" alt="Profile" />
+        <div>
+          <h3 id="profile-name">User Name</h3>
+          <p>💰 <span id="coin-balance">0</span> Coins</p>
         </div>
+      </div>
+    </header>
 
-        <!-- Banner Ads -->
-        <div class="banner">
-            <img id="banner-img" src="" alt="Banner Ad">
-        </div>
+    <!-- Banner Ads -->
+    <section id="banner">
+      <img id="banner-img" src="assets/ad1.png" alt="Ad Banner" />
+    </section>
 
-        <!-- Games -->
-        <div class="games">
-            <h3>Games</h3>
-            <div class="game" id="pubg-game">
-                <img src="assets/pubg-logo.png" alt="PUBG">
-                <p>PUBG MOBILE UC</p>
-            </div>
-            <div class="game" id="mlbb-game">
-                <img src="assets/mlbb-logo.png" alt="MLBB">
-                <p>MLBB DIAMOND</p>
-            </div>
-        </div>
-    </div>
+    <!-- Navigation Tabs -->
+    <nav>
+      <button data-page="home">Home</button>
+      <button data-page="tasks">Tasks</button>
+      <button data-page="refer">Refer</button>
+      <button data-page="orders">Orders</button>
+    </nav>
 
-    <script src="main.js"></script>
+    <!-- Pages -->
+    <main>
+      <section id="page-home" class="page active">
+        <h2>Games</h2>
+        <div class="game-card">PUBG MOBILE (UC)</div>
+        <div class="game-card">Mobile Legends (Diamonds)</div>
+      </section>
+
+      <section id="page-tasks" class="page">
+        <h2>Tasks</h2>
+        <p>Watch Ads / Join Channels</p>
+      </section>
+
+      <section id="page-refer" class="page">
+        <h2>Refer & Earn</h2>
+        <p>Invite your friends and earn coins!</p>
+      </section>
+
+      <section id="page-orders" class="page">
+        <h2>My Orders</h2>
+        <p>No orders yet.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="main.js"></script>
 </body>
 </html>
