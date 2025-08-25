@@ -1,10 +1,13 @@
+// Backend URL
 const BACKEND_URL = "https://gamevault-backend-7vtc.onrender.com";
 
 // Telegram Web App Initialize
 const tg = window.Telegram.WebApp;
 tg.expand(); // Fullscreen app
 
+// Telegram User Data
 const userData = tg.initDataUnsafe.user;
+console.log("Telegram User:", userData);
 
 // Demo banners (assets + click URL)
 const banners = [
@@ -23,9 +26,7 @@ function rotateBanner() {
     currentBanner = (currentBanner + 1) % banners.length;
 }
 
-setInterval(rotateBanner, 10000);
-
-// Fetch Profile
+// Fetch Profile from Backend
 function fetchProfile() {
     fetch(`${BACKEND_URL}/api/auth/profile/${userData.id}`)
       .then(res => res.json())
@@ -34,7 +35,8 @@ function fetchProfile() {
           document.getElementById("profile-username").innerText = data.username ? "@" + data.username : "";
           document.getElementById("coin-balance").innerText = data.coin_balance + " Coins";
           document.getElementById("profile-photo").src = data.photo_url || "default-avatar.png";
-      });
+      })
+      .catch(err => console.error("Profile fetch error:", err));
 }
 
 // Telegram Login / Auto Register
@@ -47,7 +49,8 @@ function loginTelegram() {
     .then(res => res.json())
     .then(data => {
         console.log("Logged in User:", data.user);
-    });
+    })
+    .catch(err => console.error("Login error:", err));
 }
 
 // Show Home Page after loading
@@ -57,16 +60,25 @@ window.addEventListener("load", () => {
         document.getElementById("home").classList.remove("hidden");
 
         loginTelegram(); // auto register/login
-        fetchProfile();  // show profile
-        rotateBanner();  // start banner ads
+        fetchProfile();  // display profile
+        rotateBanner();  // start banner rotation
     }, 2000); // simulate loading delay
 });
 
 // Game Click Handlers
 document.getElementById("pubg-game").onclick = () => {
-    alert("Selected PUBG MOBILE UC\nOrder flow will start here.");
+    const order = prompt("Enter your PUBG Account ID for order:");
+    if(order) {
+        alert(`PUBG UC order submitted for ID: ${order}`);
+        // TODO: call backend API to create order & deduct coins
+    }
 };
 
 document.getElementById("mlbb-game").onclick = () => {
-    alert("Selected MLBB DIAMOND\nOrder flow will start here.");
+    const orderId = prompt("Enter your MLBB Account ID:");
+    const serverId = prompt("Enter Server ID:");
+    if(orderId && serverId) {
+        alert(`MLBB Diamond order submitted for ID: ${orderId}, Server: ${serverId}`);
+        // TODO: call backend API to create order & deduct coins
+    }
 };
