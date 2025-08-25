@@ -3,13 +3,13 @@ const BACKEND_URL = "https://gamevault-backend-7vtc.onrender.com";
 
 // Telegram Web App Initialize
 const tg = window.Telegram.WebApp;
-tg.expand(); // Fullscreen app
+tg.expand(); // Fullscreen
 
 // Telegram User Data
-const userData = tg.initDataUnsafe.user;
+const userData = tg.initDataUnsafe?.user || {};
 console.log("Telegram User:", userData);
 
-// Demo banners (assets + click URL)
+// Demo banners
 const banners = [
     { img: "assets/ad1.png", url: "https://example.com/ad1" },
     { img: "assets/ad2.png", url: "https://example.com/ad2" },
@@ -18,25 +18,32 @@ const banners = [
 
 let currentBanner = 0;
 
-// Rotate Banner Ads every 10 seconds
+// Rotate Banner Ads
 function rotateBanner() {
     const bannerImg = document.getElementById("banner-img");
+    if (!bannerImg) return;
     bannerImg.src = banners[currentBanner].img;
-    bannerImg.onclick = () => window.open(banners[currentBanner].url, "_blank");
+    bannerImg.onclick = () => {
+        window.open(banners[currentBanner].url, "_blank");
+        console.log("Ad clicked:", banners[currentBanner].url);
+    };
     currentBanner = (currentBanner + 1) % banners.length;
+    setTimeout(rotateBanner, 10000); // every 10s
 }
 
-// Fetch Profile from Backend
+// Fetch Profile
 function fetchProfile() {
+    if (!userData.id) return;
     fetch(`${BACKEND_URL}/api/auth/profile/${userData.id}`)
-      .then(res => res.json())
-      .then(data => {
-          document.getElementById("profile-name").innerText = data.first_name + " " + (data.last_name || "");
-          document.getElementById("profile-username").innerText = data.username ? "@" + data.username : "";
-          document.getElementById("coin-balance").innerText = data.coin_balance + " Coins";
-          document.getElementById("profile-photo").src = data.photo_url || "default-avatar.png";
-      })
-      .catch(err => console.error("Profile fetch error:", err));
+        .then(res => res.json())
+        .then(data => {
+            console.log("Profile:", data);
+            document.getElementById("profile-name").innerText = data.first_name + " " + (data.last_name || "");
+            document.getElementById("profile-username").innerText = data.username ? "@" + data.username : "";
+            document.getElementById("coin-balance").innerText = (data.coin_balance || 0) + " Coins";
+            document.getElementById("profile-photo").src = data.photo_url || "default-avatar.png";
+        })
+        .catch(err => console.error("Profile fetch error:", err));
 }
 
 // Telegram Login / Auto Register
@@ -46,39 +53,59 @@ function loginTelegram() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ initData: tg.initData })
     })
-    .then(res => res.json())
-    .then(data => {
-        console.log("Logged in User:", data.user);
-    })
-    .catch(err => console.error("Login error:", err));
+        .then(res => res.json())
+        .then(data => {
+            console.log("Login success:", data);
+        })
+        .catch(err => console.error("Login error:", err));
 }
 
-// Show Home Page after loading
+// Page Load Handler
 window.addEventListener("load", () => {
-    setTimeout(() => {
-        document.getElementById("loading").classList.add("hidden");
-        document.getElementById("home").classList.remove("hidden");
+    console.log("Page Loaded ✅");
 
-        loginTelegram(); // auto register/login
-        fetchProfile();  // display profile
-        rotateBanner();  // start banner rotation
-    }, 2000); // simulate loading delay
+    setTimeout(() => {
+        const loadingPage = document.getElementById("loading");
+        const homePage = document.getElementById("home");
+
+        if (loadingPage && homePage) {
+            loadingPage.classList.add("hidden");
+            homePage.classList.remove("hidden");
+
+            // Initialize app functions
+            loginTelegram();
+            fetchProfile();
+            rotateBanner();
+        } else {
+            console.error("❌ Loading or Home element not found in HTML!");
+        }
+    }, 2000); // 2s loading
 });
 
-// Game Click Handlers
-document.getElementById("pubg-game").onclick = () => {
-    const order = prompt("Enter your PUBG Account ID for order:");
-    if(order) {
-        alert(`PUBG UC order submitted for ID: ${order}`);
-        // TODO: call backend API to create order & deduct coins
-    }
-};
+// Game Order Handlers
+document.addEventListener("DOMContentLoaded", () => {
+    const pubgBtn = document.getElementById("pubg-game");
+    const mlbbBtn = document.getElementById("mlbb-game");
 
-document.getElementById("mlbb-game").onclick = () => {
-    const orderId = prompt("Enter your MLBB Account ID:");
-    const serverId = prompt("Enter Server ID:");
-    if(orderId && serverId) {
-        alert(`MLBB Diamond order submitted for ID: ${orderId}, Server: ${serverId}`);
-        // TODO: call backend API to create order & deduct coins
+    if (pubgBtn) {
+        pubgBtn.onclick = () => {
+            const accountId = prompt("Enter your PUBG Account ID:");
+            if (accountId) {
+                alert(`PUBG UC order submitted for ID: ${accountId}`);
+                // TODO: Call backend API
+            }
+        };
     }
-};
+
+    if (mlbbBtn) {
+        mlbbBtn.onclick = () => {
+            const accountId = prompt("Enter your MLBB Account ID:");
+            const serverId = prompt("Enter your Server ID:");
+            if (accountId && serverId) {
+                alert(`MLBB Diamond order submitted for ID: ${accountId}, Server: ${serverId}`);
+                // TODO: Call backend API
+            }
+        };
+    }
+});
+;
