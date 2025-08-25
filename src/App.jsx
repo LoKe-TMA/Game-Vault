@@ -147,3 +147,67 @@ function BannerCarousel({ items, onClick, intervalMs = 10000 }) {
           <span key={i} className={`w-2 h-2 rounded-full ${i === index ? "bg-white" : "bg-white/50"}`} />
         ))}
       </div>
+    </div>
+  );
+}
+
+/** Games Section */
+function GamesSection({ title, items, type }) {
+  return (
+    <section className="mt-4">
+      <h2 className="text-lg font-semibold mb-2">{title}</h2>
+      <div className="grid grid-cols-2 gap-3">
+        {items.map((item, idx) => (
+          <div key={idx} className="border rounded-xl p-3 flex flex-col items-center gap-2 hover:shadow-lg cursor-pointer">
+            <div className="text-sm font-semibold">{type === "PUBG" ? item.uc + " UC" : item.diamond + " Diamond"}</div>
+            <div className="text-gray-500 text-xs">{item.price} MMK</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/** App component */
+export default function App() {
+  const { user } = useTelegram();
+  const [coins, setCoins] = useState(100);
+  const [tab, setTab] = useState("Home");
+  const showAd = useAdsgram({
+    blockId: ADSGRAM_BLOCK_ID,
+    onReward: () => setCoins((c) => c + 50),
+    onError: console.log,
+  });
+
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1200);
+  }, []);
+
+  if (loading) return <LoadingScreen />;
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <TopBar profile={user} coins={coins} onTab={setTab} tab={tab} />
+      <main className="max-w-screen-md mx-auto px-4 py-3">
+        {tab === "Home" && (
+          <>
+            <BannerCarousel items={DEMO_BANNERS} onClick={(item) => window.open(item.href, "_blank")} />
+            <GamesSection title="PUBG UC Packs" items={PUBG_UC_PACKS} type="PUBG" />
+            <GamesSection title="MLBB Diamond Packs" items={MLBB_DIAMOND_PACKS} type="MLBB" />
+          </>
+        )}
+        {tab === "Tasks" && (
+          <button
+            onClick={showAd}
+            className="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold mt-4"
+          >
+            Watch Ad & Earn Coins
+          </button>
+        )}
+        {tab === "Refer" && <p className="text-gray-500 mt-4">Share your referral link: t.me/{BOT_USERNAME}?start={user?.id}</p>}
+        {tab === "Order" && <p className="text-gray-500 mt-4">Order history coming soon...</p>}
+      </main>
+    </div>
+  );
+}
