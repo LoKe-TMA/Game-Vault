@@ -2,11 +2,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadingScreen = document.getElementById("loading-screen");
   const app = document.getElementById("app");
 
-  // Show dashboard after fake loading
+  // show loading for 2s then switch to dashboard
   setTimeout(() => {
-    loadingScreen.classList.add("hidden");
-    app.classList.remove("hidden");
-  }, 1500);
+    if (loadingScreen) loadingScreen.style.display = "none";
+    if (app) app.style.display = "block";
+  }, 2000);
 
   // Navigation
   const navButtons = document.querySelectorAll("nav button");
@@ -18,11 +18,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Banner Ads (static rotation)
+  // Banner Ads (rotation)
   const ads = [
-    { img: "https://i.imgur.com/ad1.png", link: "https://partner1.com" },
-    { img: "https://i.imgur.com/ad2.png", link: "https://partner2.com" },
-    { img: "https://i.imgur.com/ad3.png", link: "https://partner3.com" },
+    { img: "https://i.imgur.com/xxxxx.png", link: "https://partner1.com" },
+    { img: "https://i.imgur.com/yyyyy.png", link: "https://partner2.com" },
+    { img: "https://i.imgur.com/zzzzz.png", link: "https://partner3.com" },
   ];
   let currentAd = 0;
   const bannerImg = document.getElementById("banner-img");
