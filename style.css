@@ -1,79 +1,90 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f2f2f2;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #121212;
+  color: #fff;
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
-#loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
+/* Loading */
+#loading-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #000;
 }
-
 .loader {
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #4CAF50;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    animation: spin 1s linear infinite;
-    margin-bottom: 10px;
+  border: 6px solid #333;
+  border-top: 6px solid #00ff99;
+  border-radius: 50%;
+  width: 50px; height: 50px;
+  animation: spin 1s linear infinite;
 }
-
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.profile {
-    text-align: center;
-    padding: 20px;
-    background: #fff;
-    margin: 10px;
-    border-radius: 10px;
+/* Header */
+header {
+  display: flex;
+  padding: 10px;
+  background: #1e1e1e;
+}
+#profile {
+  display: flex;
+  align-items: center;
+}
+#profile img {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
 }
 
-.profile img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
+/* Banner */
+#banner {
+  margin: 10px;
+  text-align: center;
+}
+#banner img {
+  width: 100%;
+  border-radius: 10px;
 }
 
-.banner {
-    margin: 10px;
-    text-align: center;
+/* Navigation */
+nav {
+  display: flex;
+  justify-content: space-around;
+  background: #1e1e1e;
+  padding: 5px;
+}
+nav button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  padding: 10px;
+}
+nav button:hover {
+  color: #00ff99;
 }
 
-.banner img {
-    width: 100%;
-    max-height: 150px;
-    object-fit: cover;
-    border-radius: 10px;
+/* Pages */
+.page {
+  display: none;
+  padding: 15px;
 }
-
-.games {
-    margin: 10px;
+.page.active {
+  display: block;
 }
-
-.game {
-    display: flex;
-    align-items: center;
-    background: #fff;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-.game img {
-    width: 50px;
-    height: 50px;
-    margin-right: 10px;
+.game-card {
+  background: #1f1f1f;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 10px;
 }
