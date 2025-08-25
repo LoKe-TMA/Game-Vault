@@ -10,59 +10,69 @@
 <body>
   <!-- Loading Screen -->
   <div id="loading-screen">
-    <div class="loader"></div>
+    <div class="spinner"></div>
     <p>Loading Game Vault...</p>
   </div>
 
-  <!-- Dashboard -->
-  <div id="app" class="hidden">
-    <!-- Header -->
-    <header>
-      <div id="profile">
-        <img id="profile-photo" src="assets/default-avatar.png" alt="Profile" />
+  <!-- Main App -->
+  <div id="app" style="display: none;">
+    <!-- Dashboard (Home Page) -->
+    <div id="page-home" class="page active">
+      <div class="profile">
+        <img id="profile-photo" src="https://i.imgur.com/placeholder.png" alt="Profile" />
         <div>
-          <h3 id="profile-name">User Name</h3>
-          <p>💰 <span id="coin-balance">0</span> Coins</p>
+          <p id="profile-name">Loading...</p>
+          <p id="profile-id">@user</p>
+          <p id="coin-balance">0 Coins</p>
         </div>
       </div>
-    </header>
 
-    <!-- Banner Ads -->
-    <section id="banner">
-      <img id="banner-img" src="assets/ad1.png" alt="Ad Banner" />
-    </section>
+      <!-- Banner Ads -->
+      <div class="banner">
+        <img id="banner-img" src="" alt="Ad Banner" />
+      </div>
 
-    <!-- Navigation Tabs -->
+      <!-- Games Section -->
+      <div class="games">
+        <h3>Available Games</h3>
+        <ul>
+          <li>
+            <img src="https://i.imgur.com/yourPUBGlogo.png" alt="PUBG Logo" />
+            PUBG Mobile UC
+          </li>
+          <li>
+            <img src="https://i.imgur.com/yourMLBBlogo.png" alt="MLBB Logo" />
+            Mobile Legends Diamonds
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Tasks Page -->
+    <div id="page-tasks" class="page">
+      <h2>Tasks</h2>
+      <p>Daily Tasks & Special Tasks will appear here.</p>
+    </div>
+
+    <!-- Refer Page -->
+    <div id="page-refer" class="page">
+      <h2>Refer & Earn</h2>
+      <p>Invite friends and earn coins.</p>
+    </div>
+
+    <!-- Orders Page -->
+    <div id="page-order" class="page">
+      <h2>Your Orders</h2>
+      <p>Orders history will appear here.</p>
+    </div>
+
+    <!-- Navigation -->
     <nav>
       <button data-page="home">Home</button>
       <button data-page="tasks">Tasks</button>
       <button data-page="refer">Refer</button>
-      <button data-page="orders">Orders</button>
+      <button data-page="order">Order</button>
     </nav>
-
-    <!-- Pages -->
-    <main>
-      <section id="page-home" class="page active">
-        <h2>Games</h2>
-        <div class="game-card">PUBG MOBILE (UC)</div>
-        <div class="game-card">Mobile Legends (Diamonds)</div>
-      </section>
-
-      <section id="page-tasks" class="page">
-        <h2>Tasks</h2>
-        <p>Watch Ads / Join Channels</p>
-      </section>
-
-      <section id="page-refer" class="page">
-        <h2>Refer & Earn</h2>
-        <p>Invite your friends and earn coins!</p>
-      </section>
-
-      <section id="page-orders" class="page">
-        <h2>My Orders</h2>
-        <p>No orders yet.</p>
-      </section>
-    </main>
   </div>
 
   <script src="main.js"></script>
