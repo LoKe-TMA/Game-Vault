@@ -1,10 +1,10 @@
+const BACKEND_URL = "https://gamevault-backend-7vtc.onrender.com";
+
 // Telegram Web App Initialize
 const tg = window.Telegram.WebApp;
 tg.expand(); // Fullscreen app
 
-// Telegram User Data
-const userData = tg.initDataUnsafe.user; // id, first_name, last_name, username, photo_url
-console.log("Telegram User:", userData);
+const userData = tg.initDataUnsafe.user;
 
 // Demo banners (assets + click URL)
 const banners = [
@@ -25,9 +25,9 @@ function rotateBanner() {
 
 setInterval(rotateBanner, 10000);
 
-// Fetch Profile from Backend API
+// Fetch Profile
 function fetchProfile() {
-    fetch(`https://your-backend.com/api/auth/profile/${userData.id}`)
+    fetch(`${BACKEND_URL}/api/auth/profile/${userData.id}`)
       .then(res => res.json())
       .then(data => {
           document.getElementById("profile-name").innerText = data.first_name + " " + (data.last_name || "");
@@ -39,10 +39,10 @@ function fetchProfile() {
 
 // Telegram Login / Auto Register
 function loginTelegram() {
-    fetch("https://your-backend.com/api/auth/login", {
+    fetch(`${BACKEND_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ initData: tg.initData }) // send initData to backend
+        body: JSON.stringify({ initData: tg.initData })
     })
     .then(res => res.json())
     .then(data => {
