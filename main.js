@@ -1,5 +1,5 @@
 // Backend URL
-const BACKEND_URL = "https://gamevault-backend-7vtc.onrender.com";
+const BACKEND_URL = "https://gamevault-backend-fkzs.onrender.com";
 
 // Telegram Web App Initialize
 const tg = window.Telegram.WebApp;
