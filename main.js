@@ -2,31 +2,39 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadingScreen = document.getElementById("loading-screen");
   const app = document.getElementById("app");
 
-  // Fake loading delay
+  // Show dashboard after fake loading
   setTimeout(() => {
     loadingScreen.classList.add("hidden");
     app.classList.remove("hidden");
   }, 1500);
 
-  // Navigation switching
+  // Navigation
   const navButtons = document.querySelectorAll("nav button");
   const pages = document.querySelectorAll(".page");
-
   navButtons.forEach(btn => {
     btn.addEventListener("click", () => {
-      const target = btn.dataset.page;
       pages.forEach(p => p.classList.remove("active"));
-      document.getElementById(`page-${target}`).classList.add("active");
+      document.getElementById(`page-${btn.dataset.page}`).classList.add("active");
     });
   });
 
-  // Banner ads rotation (static for now)
-  const ads = ["assets/ad1.png", "assets/ad2.png", "assets/ad3.png"];
+  // Banner Ads (static rotation)
+  const ads = [
+    { img: "https://i.imgur.com/ad1.png", link: "https://partner1.com" },
+    { img: "https://i.imgur.com/ad2.png", link: "https://partner2.com" },
+    { img: "https://i.imgur.com/ad3.png", link: "https://partner3.com" },
+  ];
   let currentAd = 0;
   const bannerImg = document.getElementById("banner-img");
 
+  function showAd(index) {
+    bannerImg.src = ads[index].img;
+    bannerImg.onclick = () => window.open(ads[index].link, "_blank");
+  }
+
+  showAd(currentAd);
   setInterval(() => {
     currentAd = (currentAd + 1) % ads.length;
-    bannerImg.src = ads[currentAd];
+    showAd(currentAd);
   }, 10000);
 });
