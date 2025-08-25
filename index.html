@@ -1,80 +1,328 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game Vault</title>
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="style.css">
-
-  <!-- Telegram SDK -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Vault</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f0f0; }
+        .loading { display: flex; justify-content: center; align-items: center; height: 100vh; font-size: 24px; }
+        .dashboard { display: none; }
+        .nav { display: flex; justify-content: space-around; background-color: #333; color: white; padding: 10px; }
+        .nav button { background: none; border: none; color: white; cursor: pointer; }
+        .page { display: none; padding: 20px; }
+        .banner { height: 100px; background-color: #ddd; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; }
+        .banner img { max-height: 100%; cursor: pointer; }
+        .game-list { margin-top: 20px; }
+        .game-item { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; cursor: pointer; }
+        .alert { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border: 1px solid #ccc; display: none; z-index: 10; }
+        .notification { position: fixed; top: 10px; right: 10px; background: green; color: white; padding: 10px; display: none; z-index: 10; }
+    </style>
 </head>
 <body>
-  <!-- Loading Screen -->
-  <div id="loading" class="loading-screen">
-    <h2>🚀 Loading Game Vault...</h2>
-  </div>
-
-  <!-- Main App -->
-  <div id="app" style="display:none;">
-    <header>🎮 Game Vault</header>
-
-    <!-- Tabs -->
-    <div class="tabs">
-      <div class="tab active" onclick="showPage('home')">Home</div>
-      <div class="tab" onclick="showPage('tasks')">Tasks</div>
-      <div class="tab" onclick="showPage('refer')">Refer</div>
-      <div class="tab" onclick="showPage('orders')">Orders</div>
+    <div id="loading" class="loading">Loading...</div>
+    <div id="dashboard" class="dashboard">
+        <div class="nav">
+            <button onclick="showPage('home')">Home</button>
+            <button onclick="showPage('tasks')">Tasks</button>
+            <button onclick="showPage('refer')">Refer</button>
+            <button onclick="showPage('order')">Order</button>
+        </div>
+        <div id="home" class="page">
+            <div id="profile">Profile: <span id="username"></span></div>
+            <div id="balance">Coins: <span id="coin-balance">0</span></div>
+            <div id="banner" class="banner"></div>
+            <div class="game-list">
+                <h3>Games</h3>
+                <div id="pubg" class="game-item">PUBG MOBILE: UC (Logo: <img src="pubg-logo.png" alt="PUBG" width="50">)</div>
+                <div id="mlbb" class="game-item">Mobile Legends: Diamond (Logo: <img src="mlbb-logo.png" alt="MLBB" width="50">)</div>
+            </div>
+        </div>
+        <div id="tasks" class="page">
+            <div>Coin Balance: <span id="tasks-balance">0</span></div>
+            <h3>Daily Tasks</h3>
+            <div>Watch Short Ad (Progress: <span id="ad-progress">0%</span>)</div>
+            <button id="watch-ad">Watch Ad</button>
+            <h3>Special Tasks</h3>
+            <div id="special-tasks"></div>
+        </div>
+        <div id="refer" class="page">
+            <div>Refer Bonus: 100 Coins</div>
+            <button id="invite">Invite Friend</button>
+            <button id="copy-link">Copy Link</button>
+            <div>Total Friends: <span id="total-friends">0</span> / Coins: <span id="refer-coins">0</span></div>
+        </div>
+        <div id="order" class="page">
+            <h3>Orders</h3>
+            <div id="order-list"></div>
+        </div>
     </div>
-
-    <!-- Pages -->
-    <div id="home" class="page active">
-      <div class="profile">
-        <img id="profile-pic" src="assets/default.png" alt="Profile">
-        <h2 id="profile-name">Guest</h2>
-        <p>💰 Coins: <span id="coin-balance">0</span></p>
-      </div>
-
-      <!-- Banner Ads -->
-      <div id="banner" class="banner">
-        <img id="banner-img" src="assets/banner1.png" alt="Ad Banner">
-      </div>
-
-      <!-- Games Section -->
-      <h2>🎮 Available Games</h2>
-      <div class="game-card">
-        <h3>PUBG Mobile</h3>
-        <button onclick="openGame('PUBG')">View UC Packages</button>
-      </div>
-      <div class="game-card">
-        <h3>Mobile Legends</h3>
-        <button onclick="openGame('MLBB')">View Diamond Packages</button>
-      </div>
+    <div id="alert" class="alert">
+        <div id="alert-content"></div>
+        <input type="text" id="account-id" placeholder="Account ID">
+        <input type="text" id="server-id" placeholder="Server ID" style="display: none;">
+        <button id="submit-order">Submit Order</button>
     </div>
+    <div id="notification" class="notification"></div>
 
-    <div id="tasks" class="page">
-      <h2>📋 Tasks</h2>
-      <div id="task-list"></div>
-    </div>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        const user = tg.initDataUnsafe.user;
+        let coinBalance = 0;
+        let adWatched = 0; // Client-side only, as per instructions
+        let orders = [];
+        let banners = [
+            { image: 'banner1.png', url: 'https://example.com/1', clicks: 0 },
+            { image: 'banner2.png', url: 'https://example.com/2', clicks: 0 },
+            { image: 'banner3.png', url: 'https://example.com/3', clicks: 0 }
+        ];
+        let currentBanner = 0;
+        const pubgUC = [
+            { uc: 60, price: 4500 },
+            { uc: 180, price: 13500 },
+            { uc: 325, price: 21000 },
+            { uc: 385, price: 25500 },
+            { uc: 660, price: 41000 },
+            { uc: 720, price: 45000 },
+            { uc: 985, price: 61000 },
+            { uc: 1800, price: 100000 }
+        ];
+        const mlbbDiamonds = [
+            { diamond: 'Weekly Pass', price: 6500 },
+            { diamond: 86, price: 5500 },
+            { diamond: 172, price: 11000 },
+            { diamond: 257, price: 16500 },
+            { diamond: 343, price: 21500 },
+            { diamond: 429, price: 27000 },
+            { diamond: 706, price: 43000 },
+            { diamond: 1049, price: 63000 }
+        ];
+        let selectedItem = null;
+        let isPubg = false;
 
-    <div id="refer" class="page">
-      <h2>👥 Refer & Earn</h2>
-      <p>Invite your friends & earn 100 coins!</p>
-      <button onclick="inviteFriend()">Invite Friend</button>
-      <button onclick="copyLink()">Copy Link</button>
-      <p>Total Friends: <span id="total-friends">0</span></p>
-      <p>Total Coins from Referrals: <span id="ref-coins">0</span></p>
-    </div>
+        // Loading page
+        setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            showPage('home');
+            autoRegister();
+        }, 2000);
 
-    <div id="orders" class="page">
-      <h2>📦 My Orders</h2>
-      <div id="order-list"></div>
-    </div>
-  </div>
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+            document.getElementById(pageId).style.display = 'block';
+            if (pageId === 'home') rotateBanner();
+            if (pageId === 'tasks') loadSpecialTasks();
+            if (pageId === 'order') loadOrders();
+            if (pageId === 'refer') loadReferInfo();
+        }
 
-  <!-- JS -->
-  <script src="main.js"></script>
+        function autoRegister() {
+            if (!user) return;
+            fetch('https://your-backend-url/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telegramId: user.id, username: user.username })
+            }).then(res => res.json()).then(data => {
+                coinBalance = data.coins;
+                updateBalance();
+                document.getElementById('username').innerText = user.username;
+            });
+        }
+
+        function updateBalance() {
+            document.getElementById('coin-balance').innerText = coinBalance;
+            document.getElementById('tasks-balance').innerText = coinBalance;
+        }
+
+        function rotateBanner() {
+            const bannerDiv = document.getElementById('banner');
+            bannerDiv.innerHTML = `<img src="${banners[currentBanner].image}" alt="Banner" onclick="bannerClick(${currentBanner})">`;
+            currentBanner = (currentBanner + 1) % banners.length;
+            setTimeout(rotateBanner, 10000);
+        }
+
+        function bannerClick(index) {
+            banners[index].clicks++;
+            // Log to backend if needed
+            window.open(banners[index].url, '_blank');
+        }
+
+        // Game selection
+        document.getElementById('pubg').addEventListener('click', () => showUCList());
+        document.getElementById('mlbb').addEventListener('click', () => showDiamondList());
+
+        function showUCList() {
+            let list = '<h4>PUBG UC List</h4>';
+            pubgUC.forEach(item => {
+                list += `<div class="game-item" onclick="selectItem(${item.uc}, ${item.price}, true)">${item.uc} UC = ${item.price} Coins</div>`;
+            });
+            document.getElementById('alert-content').innerHTML = list;
+            document.getElementById('alert').style.display = 'block';
+            document.getElementById('account-id').style.display = 'none';
+            document.getElementById('server-id').style.display = 'none';
+            document.getElementById('submit-order').style.display = 'none';
+        }
+
+        function showDiamondList() {
+            let list = '<h4>MLBB Diamond List</h4>';
+            mlbbDiamonds.forEach(item => {
+                list += `<div class="game-item" onclick="selectItem('${item.diamond}', ${item.price}, false)">${item.diamond} = ${item.price} Coins</div>`;
+            });
+            document.getElementById('alert-content').innerHTML = list;
+            document.getElementById('alert').style.display = 'block';
+            document.getElementById('account-id').style.display = 'none';
+            document.getElementById('server-id').style.display = 'none';
+            document.getElementById('submit-order').style.display = 'none';
+        }
+
+        window.selectItem = function(item, price, pubg) {
+            selectedItem = { item, price };
+            isPubg = pubg;
+            let prompt = `Order Type: ${item} / Coins ${price}<br>Enter Account ID:`;
+            if (!pubg) prompt += '<br>Enter Server ID:';
+            document.getElementById('alert-content').innerHTML = prompt;
+            document.getElementById('account-id').style.display = 'block';
+            document.getElementById('server-id').style.display = pubg ? 'none' : 'block';
+            document.getElementById('submit-order').style.display = 'block';
+        }
+
+        document.getElementById('submit-order').addEventListener('click', () => {
+            const accountId = document.getElementById('account-id').value;
+            const serverId = document.getElementById('server-id').value;
+            if (!accountId || (!isPubg && !serverId)) return alert('Fill all fields');
+            if (coinBalance < selectedItem.price) return alert('Insufficient coins');
+            fetch('https://your-backend-url/place-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    telegramId: user.id,
+                    type: isPubg ? 'PUBG UC' : 'MLBB Diamond',
+                    item: selectedItem.item,
+                    price: selectedItem.price,
+                    accountId,
+                    serverId: isPubg ? null : serverId
+                })
+            }).then(res => res.json()).then(data => {
+                coinBalance -= selectedItem.price;
+                updateBalance();
+                showNotification('✅ Order Placed');
+                document.getElementById('alert').style.display = 'none';
+                // Bot will handle admin notification
+            });
+        });
+
+        // Ads
+        const AdController = window.Adsgram.init({ blockId: "int-14145" }); // Replace with your blockId
+        document.getElementById('watch-ad').addEventListener('click', () => {
+            if (adWatched >= 20) return alert('Daily limit reached');
+            AdController.show().then(() => {
+                adWatched++;
+                // Reward coins via backend
+                fetch('https://your-backend-url/reward-ad', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegramId: user.id })
+                }).then(res => res.json()).then(data => {
+                    coinBalance = data.coins;
+                    updateBalance();
+                    updateAdProgress();
+                    showNotification('🎁 Task Reward Earned');
+                    checkReferralBonus();
+                });
+            }).catch(err => alert('Ad error'));
+        });
+
+        function updateAdProgress() {
+            const progress = (adWatched / 20) * 100;
+            document.getElementById('ad-progress').innerText = `${progress}%`;
+            if (new Date().getHours() === 0 && new Date().getMinutes() === 0) adWatched = 0; // Reset at midnight, client-side
+        }
+
+        function checkReferralBonus() {
+            if (adWatched === 20) {
+                fetch('https://your-backend-url/check-referral-bonus', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegramId: user.id })
+                }).then(res => res.json()).then(data => {
+                    if (data.bonusAdded) {
+                        showNotification('🎁 Referral Bonus Received');
+                    }
+                });
+            }
+        }
+
+        // Special Tasks
+        function loadSpecialTasks() {
+            fetch('https://your-backend-url/special-tasks?telegramId=' + user.id).then(res => res.json()).then(tasks => {
+                let html = '';
+                tasks.forEach(task => {
+                    html += `<div>${task.name} <button onclick="joinTask('${task.type}', '${task.id}')">Join</button></div>`;
+                });
+                document.getElementById('special-tasks').innerHTML = html;
+            });
+        }
+
+        window.joinTask = function(type, id) {
+            // Use Telegram SDK to check join
+            if (type === 'channel') {
+                tg.openTelegramLink(`https://t.me/${id}`);
+            } else if (type === 'bot') {
+                tg.openTelegramLink(`https://t.me/${id}?start=1`);
+            }
+            // Auto verify
+            setTimeout(() => {
+                fetch('https://your-backend-url/verify-task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegramId: user.id, taskId: id })
+                }).then(res => res.json()).then(data => {
+                    if (data.verified) {
+                        coinBalance = data.coins;
+                        updateBalance();
+                        showNotification('🎁 Task Reward Earned');
+                    }
+                });
+            }, 5000); // Delay for join
+        }
+
+        // Refer
+        const referLink = `https://t.me/yourbot?start=${user.id}`;
+        document.getElementById('invite').addEventListener('click', () => tg.shareUrl(referLink));
+        document.getElementById('copy-link').addEventListener('click', () => {
+            navigator.clipboard.writeText(referLink);
+            alert('Link copied');
+        });
+
+        function loadReferInfo() {
+            fetch('https://your-backend-url/refer-info?telegramId=' + user.id).then(res => res.json()).then(data => {
+                document.getElementById('total-friends').innerText = data.friends;
+                document.getElementById('refer-coins').innerText = data.referCoins;
+            });
+        }
+
+        // Orders
+        function loadOrders() {
+            fetch('https://your-backend-url/orders?telegramId=' + user.id).then(res => res.json()).then(data => {
+                let html = '';
+                data.forEach(order => {
+                    html += `<div>Order: ${order.type} ${order.item} - Status: ${order.status}</div>`;
+                });
+                document.getElementById('order-list').innerHTML = html;
+            });
+        }
+
+        function showNotification(message) {
+            const notif = document.getElementById('notification');
+            notif.innerText = message;
+            notif.style.display = 'block';
+            setTimeout(() => notif.style.display = 'none', 3000);
+            // Also send via bot, handled backend
+        }
+    </script>
 </body>
 </html>
