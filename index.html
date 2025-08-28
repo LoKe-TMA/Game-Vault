@@ -2,79 +2,192 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Game Vault</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body { margin:0; font-family: Arial, sans-serif; background:#111; color:#fff; }
+    header { text-align:center; padding:20px; background:#222; }
+    .loading { display:flex; align-items:center; justify-content:center; height:100vh; font-size:24px; }
+    nav { display:flex; justify-content:space-around; background:#222; padding:10px; position:fixed; bottom:0; width:100%; }
+    nav button { flex:1; padding:10px; background:none; border:none; color:#fff; font-size:16px; }
+    .page { display:none; padding:20px; margin-bottom:60px; }
+    .active { display:block; }
+    .banner { width:100%; height:150px; margin:10px 0; }
+    .game-card { background:#333; padding:10px; border-radius:8px; margin:10px 0; }
+    .order-btn { background:#0f9d58; border:none; color:white; padding:8px 12px; border-radius:5px; cursor:pointer; }
+  </style>
 </head>
 <body>
-  <!-- Loading Screen -->
-  <div id="loading-screen">
-    <div class="spinner"></div>
-    <p>Loading Game Vault...</p>
-  </div>
+  <!-- Loading Page -->
+  <div id="loading" class="loading">🚀 Loading Game Vault...</div>
 
   <!-- Main App -->
-  <div id="app" style="display: none;">
-    <!-- Dashboard (Home Page) -->
-    <div id="page-home" class="page active">
-      <div class="profile">
-        <img id="profile-photo" src="https://i.imgur.com/placeholder.png" alt="Profile" />
-        <div>
-          <p id="profile-name">Loading...</p>
-          <p id="profile-id">@user</p>
-          <p id="coin-balance">0 Coins</p>
-        </div>
-      </div>
+  <div id="app" style="display:none">
+    <header>
+      <h2>Game Vault</h2>
+      <p id="username">Account: Guest</p>
+      <p>Coins: <span id="coins">0</span></p>
+    </header>
 
-      <!-- Banner Ads -->
-      <div class="banner">
-        <img id="banner-img" src="" alt="Ad Banner" />
+    <!-- Pages -->
+    <div id="home" class="page active">
+      <h3>🏠 Home</h3>
+      <img id="banner" class="banner" src="" alt="Ad Banner" />
+      <div class="game-card">
+        <h4>PUBG Mobile - UC</h4>
+        <button class="order-btn" onclick="placeOrder('PUBG', 'UC 60', 4500)">UC 60 = 4500</button>
       </div>
-
-      <!-- Games Section -->
-      <div class="games">
-        <h3>Available Games</h3>
-        <ul>
-          <li>
-            <img src="https://i.imgur.com/yourPUBGlogo.png" alt="PUBG Logo" />
-            PUBG Mobile UC
-          </li>
-          <li>
-            <img src="https://i.imgur.com/yourMLBBlogo.png" alt="MLBB Logo" />
-            Mobile Legends Diamonds
-          </li>
-        </ul>
+      <div class="game-card">
+        <h4>Mobile Legends - Diamond</h4>
+        <button class="order-btn" onclick="placeOrder('MLBB', 'Diamond 86', 5500)">Diamond 86 = 5500</button>
       </div>
     </div>
 
-    <!-- Tasks Page -->
-    <div id="page-tasks" class="page">
-      <h2>Tasks</h2>
-      <p>Daily Tasks & Special Tasks will appear here.</p>
+    <div id="tasks" class="page">
+      <h3>📝 Tasks</h3>
+      <p>Daily Ads Watched: <span id="adsCount">0</span>/20</p>
+      <button class="order-btn" onclick="watchAd()">Watch Ad</button>
     </div>
 
-    <!-- Refer Page -->
-    <div id="page-refer" class="page">
-      <h2>Refer & Earn</h2>
-      <p>Invite friends and earn coins.</p>
+    <div id="refer" class="page">
+      <h3>👥 Refer</h3>
+      <p>Invite Friends & Earn 100 Coins</p>
+      <button class="order-btn" onclick="copyRefer()">Copy Invite Link</button>
+      <p>Referrals: <span id="refCount">0</span></p>
     </div>
 
-    <!-- Orders Page -->
-    <div id="page-order" class="page">
-      <h2>Your Orders</h2>
-      <p>Orders history will appear here.</p>
+    <div id="orders" class="page">
+      <h3>📦 Orders</h3>
+      <ul id="orderList"></ul>
     </div>
 
-    <!-- Navigation -->
+    <!-- Bottom Nav -->
     <nav>
-      <button data-page="home">Home</button>
-      <button data-page="tasks">Tasks</button>
-      <button data-page="refer">Refer</button>
-      <button data-page="order">Order</button>
+      <button onclick="showPage('home')">Home</button>
+      <button onclick="showPage('tasks')">Tasks</button>
+      <button onclick="showPage('refer')">Refer</button>
+      <button onclick="showPage('orders')">Orders</button>
     </nav>
   </div>
 
-  <script src="main.js"></script>
+  <script>
+    const API_BASE = "https://gamevault-backend-fkzs.onrender.com/api"; // 🔑 Replace with your Render backend URL
+    let user = null;
+    let banners = [
+      {img:"https://via.placeholder.com/400x150?text=Ad+1", url:"https://example.com/ad1"},
+      {img:"https://via.placeholder.com/400x150?text=Ad+2", url:"https://example.com/ad2"},
+      {img:"https://via.placeholder.com/400x150?text=Ad+3", url:"https://example.com/ad3"},
+    ];
+    let bannerIndex = 0;
+
+    // App Init
+    async function init(){
+      // simulate login (later use Telegram WebApp SDK)
+      const telegramId = "demo_user_123";
+
+      // Auto register or fetch user
+      const res = await fetch(`${API_BASE}/users/register`, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ telegramId })
+      });
+      user = await res.json();
+
+      // update UI
+      document.getElementById("username").innerText = "Account: " + user.telegramId;
+      document.getElementById("coins").innerText = user.coins;
+
+      // Show app after loading
+      document.getElementById("loading").style.display="none";
+      document.getElementById("app").style.display="block";
+
+      rotateBanner();
+      loadOrders();
+    }
+
+    // Navigation
+    function showPage(id){
+      document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+    }
+
+    // Banner Ads
+    function rotateBanner(){
+      let banner = document.getElementById("banner");
+      banner.src = banners[bannerIndex].img;
+      banner.onclick = ()=> window.open(banners[bannerIndex].url,"_blank");
+      bannerIndex = (bannerIndex+1) % banners.length;
+      setTimeout(rotateBanner,10000);
+    }
+
+    // Tasks (just front simulation)
+    async function watchAd(){
+      if(user.dailyAds < 20){
+        user.dailyAds++;
+        user.coins += 100;
+        document.getElementById("adsCount").innerText = user.dailyAds;
+        document.getElementById("coins").innerText = user.coins;
+
+        // Update backend
+        await fetch(`${API_BASE}/users/${user._id}/updateCoins`, {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify({ coins: user.coins, dailyAds: user.dailyAds })
+        });
+
+        alert("🎁 You earned 100 coins!");
+      } else {
+        alert("❌ Daily limit reached!");
+      }
+    }
+
+    // Orders
+    async function placeOrder(game, pkg, price){
+      if(user.coins >= price){
+        let accountId = prompt(`Enter ${game} Account ID:`);
+        if(accountId){
+          user.coins -= price;
+          document.getElementById("coins").innerText = user.coins;
+
+          // Save order in backend
+          await fetch(`${API_BASE}/orders`, {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({
+              userId: user._id,
+              game, pkg, price, accountId
+            })
+          });
+
+          loadOrders();
+          alert("✅ Order placed successfully!");
+        }
+      } else {
+        alert("❌ Not enough coins!");
+      }
+    }
+
+    async function loadOrders(){
+      const res = await fetch(`${API_BASE}/orders/user/${user._id}`);
+      const orders = await res.json();
+      let list = document.getElementById("orderList");
+      list.innerHTML="";
+      orders.forEach(o=>{
+        let li = document.createElement("li");
+        li.innerText = `${o.game} - ${o.pkg} - ${o.status}`;
+        list.appendChild(li);
+      });
+    }
+
+    // Refer
+    function copyRefer(){
+      let link = "https://t.me/GameVaultBot?start=ref" + user._id;
+      navigator.clipboard.writeText(link);
+      alert("🔗 Invite link copied!");
+    }
+
+    // Run App
+    init();
+  </script>
 </body>
 </html>
