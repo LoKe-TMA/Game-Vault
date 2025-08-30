@@ -18,6 +18,9 @@ export function showHome(container, user) {
   document.getElementById("mlbb").onclick = () => openStore("MLBB", user);
 }
 
+// frontend/pages/home.js (update openStore)
+import { showModal, showToast } from "../components/ui.js";
+
 function openStore(game, user) {
   const storeItems = game === "PUBG" ? [
     { name: "UC 60", coins: 4500 },
@@ -32,30 +35,41 @@ function openStore(game, user) {
     { name: "Diamond 706", coins: 43000 }
   ];
 
-  let msg = `${game} Store\n\n`;
-  storeItems.forEach((i, idx) => msg += `${idx+1}. ${i.name} - ${i.coins} coins\n`);
-  const choice = prompt(msg + "\nEnter number:");
-  if (!choice) return;
-  const item = storeItems[choice-1];
-  if (!item) return;
+  let listHtml = storeItems.map((i, idx) =>
+    `<div class="card">
+       <p>${i.name} - ${i.coins} coins</p>
+       <button onclick="chooseItem(${idx})">Buy</button>
+     </div>`
+  ).join("");
 
-  const accountId = prompt("Enter Account ID:");
-  let serverId = "";
-  if (game === "MLBB") serverId = prompt("Enter Server ID:");
+  document.getElementById("app").innerHTML = `<h2>${game} Store</h2>${listHtml}`;
 
-  fetch("http://localhost:5000/api/orders/create", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      telegramId: user.telegramId,
-      game,
-      item: item.name,
-      priceCoins: item.coins,
-      accountId,
-      serverId
-    })
-  }).then(r => r.json()).then(data => {
-    if (data.error) return alert("❌ " + data.error);
-    alert("✅ Order placed! Pending admin confirmation.");
-  });
+  window.chooseItem = (idx) => {
+    const item = storeItems[idx];
+    let content = `
+      <input id="accountId" placeholder="Account ID" style="width:100%;margin:5px;"/>
+      ${game === "MLBB" ? '<input id="serverId" placeholder="Server ID" style="width:100%;margin:5px;"/>' : ''}
+    `;
+    showModal(`Buy ${item.name}`, content, async () => {
+      const accountId = document.getElementById("accountId").value;
+      const serverId = game === "MLBB" ? document.getElementById("serverId").value : "";
+
+      const res = await fetch("http://localhost:5000/api/orders/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          telegramId: user.telegramId,
+          game,
+          item: item.name,
+          priceCoins: item.coins,
+          accountId,
+          serverId
+        })
+      });
+      const data = await res.json();
+      if (data.error) return showToast("❌ " + data.error);
+      showToast("✅ Order placed!");
+    });
+  };
 }
+
