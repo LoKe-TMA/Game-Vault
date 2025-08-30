@@ -1,90 +1,46 @@
+/* frontend/styles.css */
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
+  font-family: Arial, sans-serif;
   background: #121212;
-  color: #fff;
+  color: white;
 }
 
-.hidden {
-  display: none;
-}
-
-/* Loading */
-#loading-screen {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+.loading {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #000;
+  height: 100vh;
 }
-.loader {
-  border: 6px solid #333;
-  border-top: 6px solid #00ff99;
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #444;
+  border-top: 5px solid #00ff99;
   border-radius: 50%;
-  width: 50px; height: 50px;
   animation: spin 1s linear infinite;
 }
+
 @keyframes spin {
   100% { transform: rotate(360deg); }
 }
 
-/* Header */
-header {
-  display: flex;
-  padding: 10px;
-  background: #1e1e1e;
-}
-#profile {
-  display: flex;
-  align-items: center;
-}
-#profile img {
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
-/* Banner */
-#banner {
-  margin: 10px;
-  text-align: center;
-}
-#banner img {
+.navbar {
+  position: fixed;
+  bottom: 0;
   width: 100%;
-  border-radius: 10px;
-}
-
-/* Navigation */
-nav {
+  background: #1e1e1e;
   display: flex;
   justify-content: space-around;
-  background: #1e1e1e;
-  padding: 5px;
-}
-nav button {
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-size: 14px;
-  padding: 10px;
-}
-nav button:hover {
-  color: #00ff99;
+  padding: 10px 0;
 }
 
-/* Pages */
-.page {
-  display: none;
-  padding: 15px;
-}
-.page.active {
-  display: block;
-}
-.game-card {
-  background: #1f1f1f;
-  padding: 15px;
-  margin: 10px 0;
-  border-radius: 10px;
+.navbar button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
 }
