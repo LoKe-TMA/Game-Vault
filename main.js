@@ -39,3 +39,17 @@ function navigate(page) {
   renderNavbar("home", navigate);
   navigate("home");
 })();
+
+// frontend/main.js (listen to backend push or simulate)
+function initNotifications() {
+  // In real version: use WebSocket or Telegram Bot messages
+  setInterval(() => {
+    // Poll demo endpoint for notifications
+    fetch(`http://localhost:5000/api/notifications/${window.user.telegramId}`)
+      .then(r => r.json())
+      .then(notifs => {
+        notifs.forEach(n => showToast(n.message));
+      });
+  }, 5000);
+}
+
