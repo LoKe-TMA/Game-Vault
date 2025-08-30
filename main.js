@@ -13,7 +13,7 @@ let currentUser = null;
 // Auto login
 async function login() {
   const initData = tg.initData;
-  const res = await fetch("http://localhost:5000/api/auth/login", {
+  const res = await fetch("https://gamevault-backend-fkzs.onrender.com/api/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ initData })
@@ -45,7 +45,7 @@ function initNotifications() {
   // In real version: use WebSocket or Telegram Bot messages
   setInterval(() => {
     // Poll demo endpoint for notifications
-    fetch(`http://localhost:5000/api/notifications/${window.user.telegramId}`)
+    fetch(`https://gamevault-backend-fkzs.onrender.com/api/notifications/${window.user.telegramId}`)
       .then(r => r.json())
       .then(notifs => {
         notifs.forEach(n => showToast(n.message));
