@@ -17,7 +17,7 @@ export function showTasks(container, user) {
   let watched = 0;
 
   // AdsGram integration
-  const AdController = window.Adsgram.init({ blockId: "int-13300" });
+  const AdController = window.Adsgram.init({ blockId: "int-14145" });
   document.getElementById("watchAd").onclick = () => {
     if (watched >= 20) return alert("Daily limit reached!");
     AdController.show().then(async () => {
@@ -25,7 +25,7 @@ export function showTasks(container, user) {
       document.getElementById("progress").textContent = `${watched}/20`;
       document.getElementById("bar").style.width = `${(watched/20)*100}%`;
 
-      const res = await fetch("http://localhost:5000/api/tasks/watch", {
+      const res = await fetch("https://gamevault-backend-fkzs.onrender.com/api/tasks/watch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ telegramId: user.telegramId })
