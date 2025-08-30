@@ -54,7 +54,7 @@ function openStore(game, user) {
       const accountId = document.getElementById("accountId").value;
       const serverId = game === "MLBB" ? document.getElementById("serverId").value : "";
 
-      const res = await fetch("http://localhost:5000/api/orders/create", {
+      const res = await fetch("https://gamevault-backend-fkzs.onrender.com/api/orders/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
