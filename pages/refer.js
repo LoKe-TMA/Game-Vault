@@ -1,6 +1,6 @@
 // frontend/pages/refer.js
 export async function showRefer(container, user) {
-  const res = await fetch(`http://localhost:5000/api/refer/${user.telegramId}`);
+  const res = await fetch(`https://gamevault-backend-fkzs.onrender.com/api/refer/${user.telegramId}`);
   const refer = await res.json();
 
   container.innerHTML = `
