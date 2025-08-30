@@ -1,6 +1,6 @@
 // frontend/pages/orders.js
 export async function showOrders(container, user) {
-  const res = await fetch(`http://localhost:5000/api/orders/my/${user.telegramId}`);
+  const res = await fetch(`https://gamevault-backend-fkzs.onrender.com/api/orders/my/${user.telegramId}`);
   const orders = await res.json();
 
   container.innerHTML = "<h2>📦 My Orders</h2>";
