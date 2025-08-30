@@ -3,7 +3,7 @@ let currentIndex = 0;
 let ads = [];
 
 export async function renderAds(containerId) {
-  const res = await fetch("http://localhost:5000/api/ads");
+  const res = await fetchhttps://gamevault-backend-fkzs.onrender.com/api/ads");
   ads = await res.json();
   if (!ads.length) return;
 
@@ -26,6 +26,6 @@ function showAd(container) {
 
   // Track clicks
   container.querySelector("a").onclick = async () => {
-    await fetch(`http://localhost:5000/api/ads/${ad._id}/click`, { method: "PATCH" });
+    await fetch(`https://gamevault-backend-fkzs.onrender.com/api/ads/${ad._id}/click`, { method: "PATCH" });
   };
 }
