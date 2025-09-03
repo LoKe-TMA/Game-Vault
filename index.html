@@ -1,26 +1,55 @@
-<!-- frontend/index.html -->
-<!Doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Game Vault</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <!-- Loading Animation -->
-  <div id="loading" class="loading">
-    <div class="spinner"></div>
-    <p>Loading Game Vault...</p>
-  </div>
+<!DOCTYPE html>
+<html lang="my">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+        <title>Game Vault</title>
+        <script src="https://telegram.org/js/telegram-web-app.js"></script>
+        <link rel="stylesheet" href="style.css" />
+        <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    </head>
+    <body>
+        <div id="loading-page">
+            <div class="loader"></div>
+            <h1>Game Vault</h1>
+            <p>Loading...</p>
+        </div>
 
-  <!-- Main App -->
-  <div id="app" style="display:none;">
-    <div id="page-content"></div>
-    <div id="navbar"></div>
-  </div>
+        <div id="main-app" style="display: none;">
+            <header class="app-header">
+                <span id="user-name"></span>
+                <span id="coin-balance">💰 0 Coins</span>
+            </header>
 
-  <script src="app.js" type="module"></script>
-</body>
+            <div class="banner-ads">
+                </div>
+
+            <nav class="app-nav">
+                <button class="nav-btn active" id="home-btn">🏠 Home</button>
+                <button class="nav-btn" id="tasks-btn">✅ Tasks</button>
+                <button class="nav-btn" id="refer-btn">👥 Refer</button>
+                <button class="nav-btn" id="order-btn">📦 Orders</button>
+            </nav>
+
+            <div id="home-page" class="page active">
+                <h2>Games</h2>
+                </div>
+            
+            <div id="tasks-page" class="page" style="display: none;">
+                </div>
+
+            <div id="refer-page" class="page" style="display: none;">
+                </div>
+
+            <div id="order-page" class="page" style="display: none;">
+                </div>
+
+        </div>
+
+        <div id="popup-overlay" class="popup-overlay" style="display: none;">
+            <div id="popup-content" class="popup-content"></div>
+        </div>
+
+        <script src="app.js"></script>
+    </body>
 </html>
