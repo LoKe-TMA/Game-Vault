@@ -1,5 +1,5 @@
 const telegramWebApp = window.Telegram.WebApp;
-const BACKEND_URL = 'http://localhost:3000'; // Replace with your backend URL
+const BACKEND_URL = 'https://gamevault-backend-fkzs.onrender.com'; // Replace with your backend URL
 
 // Data for Games and Ads
 const games = {
