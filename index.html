@@ -1,55 +1,82 @@
-<!DOCTYPE html>
-<html lang="my">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-        <title>Game Vault</title>
-        <script src="https://telegram.org/js/telegram-web-app.js"></script>
-        <link rel="stylesheet" href="style.css" />
-        <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-    </head>
-    <body>
-        <div id="loading-page">
-            <div class="loader"></div>
-            <h1>Game Vault</h1>
-            <p>Loading...</p>
-        </div>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Game Vault — Login Demo</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin:0; padding:16px; }
+    .card { border:1px solid #eee; border-radius:16px; padding:16px; box-shadow: 0 2px 10px rgba(0,0,0,.05); }
+    .muted { color: #666; }
+    button { padding:12px 16px; border:none; border-radius:10px; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <h2>Game Vault</h2>
+  <div id="status" class="muted">Initializing…</div>
 
-        <div id="main-app" style="display: none;">
-            <header class="app-header">
-                <span id="user-name"></span>
-                <span id="coin-balance">💰 0 Coins</span>
-            </header>
+  <div id="auth" class="card" style="margin-top:12px; display:none;">
+    <div id="hello"></div>
+    <div style="margin-top:8px" class="muted">Coins: <span id="coins">0</span></div>
+    <div style="margin-top:12px">
+      <small class="muted">Referral Code: <span id="refCode">-</span></small>
+    </div>
+  </div>
 
-            <div class="banner-ads">
-                </div>
+  <script>
+    const API_BASE = "https://gamevault-backend-fkzs.onrender.com"; // <-- change to your backend URL
 
-            <nav class="app-nav">
-                <button class="nav-btn active" id="home-btn">🏠 Home</button>
-                <button class="nav-btn" id="tasks-btn">✅ Tasks</button>
-                <button class="nav-btn" id="refer-btn">👥 Refer</button>
-                <button class="nav-btn" id="order-btn">📦 Orders</button>
-            </nav>
+    (async function init() {
+      const tg = window.Telegram.WebApp;
+      try {
+        tg.ready();
 
-            <div id="home-page" class="page active">
-                <h2>Games</h2>
-                </div>
-            
-            <div id="tasks-page" class="page" style="display: none;">
-                </div>
+        // optional: expand to full height
+        if (tg.expand) tg.expand();
 
-            <div id="refer-page" class="page" style="display: none;">
-                </div>
+        const initData = tg.initData || ""; // signed string
+        const startParam = tg.initDataUnsafe?.start_param || ""; // e.g. "ref_xxx"
 
-            <div id="order-page" class="page" style="display: none;">
-                </div>
+        if (!initData) {
+          document.getElementById('status').textContent =
+            "Not running inside Telegram WebApp. Open via your bot's Web App button.";
+          return;
+        }
 
-        </div>
+        document.getElementById('status').textContent = "Logging in…";
 
-        <div id="popup-overlay" class="popup-overlay" style="display: none;">
-            <div id="popup-content" class="popup-content"></div>
-        </div>
+        const resp = await fetch(`${API_BASE}/api/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ initData, startParam })
+        });
 
-        <script src="app.js"></script>
-    </body>
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({}));
+          throw new Error(err.error || 'Login failed');
+        }
+
+        const data = await resp.json();
+        // store token if you want to call other APIs
+        localStorage.setItem("gv_token", data.token);
+
+        // show UI
+        document.getElementById('auth').style.display = 'block';
+        const name =
+          tg.initDataUnsafe?.user?.first_name ||
+          tg.initDataUnsafe?.user?.username ||
+          'Player';
+        document.getElementById('hello').textContent = `Hello, ${name}! ✅ Logged in`;
+        document.getElementById('coins').textContent = data.user.coins ?? 0;
+        document.getElementById('refCode').textContent = data.user.referralCode;
+
+        document.getElementById('status').style.display = 'none';
+      } catch (e) {
+        console.error(e);
+        document.getElementById('status').textContent = "Login error: " + e.message;
+      }
+    })();
+  </script>
+</body>
 </html>
