@@ -1,82 +1,314 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Game Vault — Login Demo</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin:0; padding:16px; }
-    .card { border:1px solid #eee; border-radius:16px; padding:16px; box-shadow: 0 2px 10px rgba(0,0,0,.05); }
-    .muted { color: #666; }
-    button { padding:12px 16px; border:none; border-radius:10px; cursor:pointer; }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Vault</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background: #f0f0f0; }
+        .navbar { display: flex; justify-content: space-around; position: fixed; bottom: 0; width: 100%; background: #fff; padding: 10px; box-shadow: 0 -2px 5px rgba(0,0,0,0.1); }
+        .page { display: none; }
+        .active { display: block; }
+        .game-list { margin-top: 20px; }
+        .game-item { border: 1px solid #ddd; padding: 10px; margin: 10px 0; cursor: pointer; }
+        .task-item { border: 1px solid #ddd; padding: 10px; margin: 10px 0; }
+        button { padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
 </head>
 <body>
-  <h2>Game Vault</h2>
-  <div id="status" class="muted">Initializing…</div>
-
-  <div id="auth" class="card" style="margin-top:12px; display:none;">
-    <div id="hello"></div>
-    <div style="margin-top:8px" class="muted">Coins: <span id="coins">0</span></div>
-    <div style="margin-top:12px">
-      <small class="muted">Referral Code: <span id="refCode">-</span></small>
+    <div id="home" class="page active">
+        <h1>Game Vault</h1>
+        <p id="user-name">Account: Loading...</p>
+        <p id="coin-balance">Coins: Loading...</p>
+        <div class="game-list">
+            <h2>Games</h2>
+            <div id="pubg" class="game-item">
+                <img src="https://example.com/pubg-logo.png" alt="PUBG Logo" width="50"> PUBG MOBILE: UC
+                <div id="pubg-list" style="display: none;">
+                    <p onclick="selectUC(60, 4500)">60 UC = 4500 Coins</p>
+                    <p onclick="selectUC(180, 13500)">180 UC = 13500 Coins</p>
+                    <p onclick="selectUC(325, 21000)">325 UC = 21000 Coins</p>
+                    <p onclick="selectUC(385, 25500)">385 UC = 25500 Coins</p>
+                    <p onclick="selectUC(660, 41000)">660 UC = 41000 Coins</p>
+                    <p onclick="selectUC(720, 45000)">720 UC = 45000 Coins</p>
+                    <p onclick="selectUC(985, 61000)">985 UC = 61000 Coins</p>
+                    <p onclick="selectUC(1800, 100000)">1800 UC = 100000 Coins</p>
+                </div>
+            </div>
+            <div id="mlbb" class="game-item">
+                <img src="https://example.com/mlbb-logo.png" alt="MLBB Logo" width="50"> Mobile Legends: Diamond
+                <div id="mlbb-list" style="display: none;">
+                    <p onclick="selectDiamond('Weekly Pass', 6500)">Weekly Pass = 6500 Coins</p>
+                    <p onclick="selectDiamond(86, 5500)">86 Diamonds = 5500 Coins</p>
+                    <p onclick="selectDiamond(172, 11000)">172 Diamonds = 11000 Coins</p>
+                    <p onclick="selectDiamond(257, 16500)">257 Diamonds = 16500 Coins</p>
+                    <p onclick="selectDiamond(343, 21500)">343 Diamonds = 21500 Coins</p>
+                    <p onclick="selectDiamond(429, 27000)">429 Diamonds = 27000 Coins</p>
+                    <p onclick="selectDiamond(706, 43000)">706 Diamonds = 43000 Coins</p>
+                    <p onclick="selectDiamond(1049, 63000)">1049 Diamonds = 63000 Coins</p>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script>
-    const API_BASE = "https://gamevault-backend-2adm.onrender.com"; // <-- change to your backend URL
+    <div id="tasks" class="page">
+        <h1>Tasks</h1>
+        <p id="task-coin-balance">Coins: Loading...</p>
+        <div class="daily-tasks">
+            <h2>Daily Tasks</h2>
+            <div class="task-item">
+                <p>Watch Short Ad (0/20 today)</p>
+                <progress id="ad-progress" value="0" max="100"></progress>
+                <button id="watch-ad">Watch Ad</button>
+            </div>
+        </div>
+        <div class="special-tasks">
+            <h2>Special Tasks</h2>
+            <!-- Dynamically loaded -->
+        </div>
+    </div>
 
-    (async function init() {
-      const tg = window.Telegram.WebApp;
-      try {
+    <div id="refer" class="page">
+        <h1>Refer</h1>
+        <p>Refer Bonus: 100 Coins per friend</p>
+        <button id="invite-friend">Invite Friend</button>
+        <button id="copy-link">Copy Link</button>
+        <p id="total-friends">Total Friends: 0</p>
+        <p id="refer-coins">Refer Coins: 0</p>
+    </div>
+
+    <div id="order" class="page">
+        <h1>Orders</h1>
+        <!-- List of orders or form, but since orders are sent to bot, perhaps history -->
+        <p>Order history coming soon...</p>
+    </div>
+
+    <div class="navbar">
+        <button onclick="switchPage('home')">Home</button>
+        <button onclick="switchPage('tasks')">Tasks</button>
+        <button onclick="switchPage('refer')">Refer</button>
+        <button onclick="switchPage('order')">Order</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
         tg.ready();
+        const user = tg.initDataUnsafe.user;
+        let coinBalance = 0;
+        let adWatchedToday = 0;
+        const AD_LIMIT = 20;
+        const AD_CONTROLLER = window.Adsgram.init({ blockId: "int-14545" }); // Replace with your block ID
+        const BACKEND_URL = 'https://gamevault-backend-2adm.onrender.com'; // Replace with your Node.js server URL
 
-        // optional: expand to full height
-        if (tg.expand) tg.expand();
-
-        const initData = tg.initData || ""; // signed string
-        const startParam = tg.initDataUnsafe?.start_param || ""; // e.g. "ref_xxx"
-
-        if (!initData) {
-          document.getElementById('status').textContent =
-            "Not running inside Telegram WebApp. Open via your bot's Web App button.";
-          return;
+        // Auto Register/Login
+        async function autoRegister() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegramId: user.id, username: user.username || 'Anonymous' })
+                });
+                const data = await response.json();
+                coinBalance = data.coins;
+                updateUI();
+            } catch (err) {
+                console.error('Registration error:', err);
+            }
         }
 
-        document.getElementById('status').textContent = "Logging in…";
+        function updateUI() {
+            document.getElementById('user-name').textContent = `Account: ${user.username || 'Anonymous'}`;
+            document.getElementById('coin-balance').textContent = `Coins: ${coinBalance}`;
+            document.getElementById('task-coin-balance').textContent = `Coins: ${coinBalance}`;
+            updateAdProgress();
+        }
 
-        const resp = await fetch(`${API_BASE}/api/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ initData, startParam })
+        function updateAdProgress() {
+            const progress = (adWatchedToday / AD_LIMIT) * 100;
+            document.getElementById('ad-progress').value = progress;
+            document.querySelector('.daily-tasks p').textContent = `Watch Short Ad (${adWatchedToday}/${AD_LIMIT} today)`;
+        }
+
+        // Switch Pages
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            if (pageId === 'tasks') loadSpecialTasks();
+        }
+
+        // Game Selection
+        document.getElementById('pubg').addEventListener('click', () => {
+            document.getElementById('pubg-list').style.display = 'block';
+        });
+        document.getElementById('mlbb').addEventListener('click', () => {
+            document.getElementById('mlbb-list').style.display = 'block';
         });
 
-        if (!resp.ok) {
-          const err = await resp.json().catch(() => ({}));
-          throw new Error(err.error || 'Login failed');
+        async function selectUC(uc, price) {
+            if (coinBalance < price) return alert('Insufficient coins!');
+            const accountId = prompt('Enter your PUBG Account ID:');
+            if (!accountId) return;
+            alert(`Order: ${uc} UC for ${price} Coins. ID: ${accountId}`);
+            await placeOrder('PUBG', uc, price, accountId);
         }
 
-        const data = await resp.json();
-        // store token if you want to call other APIs
-        localStorage.setItem("gv_token", data.token);
+        async function selectDiamond(diamond, price) {
+            if (coinBalance < price) return alert('Insufficient coins!');
+            const accountId = prompt('Enter your MLBB Account ID:');
+            const serverId = prompt('Enter your Server ID:');
+            if (!accountId || !serverId) return;
+            alert(`Order: ${diamond} Diamonds for ${price} Coins. ID: ${accountId}, Server: ${serverId}`);
+            await placeOrder('MLBB', diamond, price, accountId, serverId);
+        }
 
-        // show UI
-        document.getElementById('auth').style.display = 'block';
-        const name =
-          tg.initDataUnsafe?.user?.first_name ||
-          tg.initDataUnsafe?.user?.username ||
-          'Player';
-        document.getElementById('hello').textContent = `Hello, ${name}! ✅ Logged in`;
-        document.getElementById('coins').textContent = data.user.coins ?? 0;
-        document.getElementById('refCode').textContent = data.user.referralCode;
+        async function placeOrder(game, item, price, accountId, serverId = null) {
+            try {
+                const response = await fetch(`${BACKEND_URL}/order`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegramId: user.id, game, item, price, accountId, serverId })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    coinBalance -= price;
+                    updateUI();
+                    alert('Order placed! Admin will process it.');
+                    // Send to bot for admin
+                } else {
+                    alert('Order failed.');
+                }
+            } catch (err) {
+                console.error('Order error:', err);
+            }
+        }
 
-        document.getElementById('status').style.display = 'none';
-      } catch (e) {
-        console.error(e);
-        document.getElementById('status').textContent = "Login error: " + e.message;
-      }
-    })();
-  </script>
+        // Ads
+        document.getElementById('watch-ad').addEventListener('click', async () => {
+            if (adWatchedToday >= AD_LIMIT) return alert('Daily limit reached!');
+            try {
+                const result = await AD_CONTROLLER.show();
+                if (result.done) {
+                    adWatchedToday++;
+                    // Reward coins, say 100 per ad
+                    await fetch(`${BACKEND_URL}/reward-ad`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ telegramId: user.id, reward: 100 })
+                    });
+                    coinBalance += 100;
+                    updateUI();
+                    // Check for refer bonus if this is 100% for the day
+                    if (adWatchedToday === AD_LIMIT) {
+                        await checkReferBonus();
+                    }
+                }
+            } catch (err) {
+                alert('Ad error: ' + JSON.stringify(err));
+            }
+        });
+
+        async function checkReferBonus() {
+            // If this user was referred, give bonus to referrer
+            await fetch(`${BACKEND_URL}/check-refer-bonus`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telegramId: user.id })
+            });
+        }
+
+        // Special Tasks
+        async function loadSpecialTasks() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/special-tasks`);
+                const tasks = await response.json();
+                const container = document.querySelector('.special-tasks');
+                container.innerHTML = '';
+                tasks.forEach(task => {
+                    const div = document.createElement('div');
+                    div.classList.add('task-item');
+                    div.innerHTML = `<p>${task.name} - ${task.reward} Coins</p><button onclick="completeTask('${task.id}', '${task.type}', '${task.target}')">Complete</button>`;
+                    container.appendChild(div);
+                });
+            } catch (err) {
+                console.error('Tasks load error:', err);
+            }
+        }
+
+        async function completeTask(taskId, type, target) {
+            let verified = false;
+            if (type === 'channel') {
+                verified = await tg.isChatMember(target, user.id); // Note: This might need bot API, but for mini app, use checkMembership
+            } else if (type === 'bot') {
+                // Similar, but Telegram SDK might not directly support, assume backend verifies
+            }
+            if (verified || true) { // Placeholder, real verification on backend
+                try {
+                    const response = await fetch(`${BACKEND_URL}/complete-task`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ telegramId: user.id, taskId })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        coinBalance += data.reward;
+                        updateUI();
+                        loadSpecialTasks();
+                    }
+                } catch (err) {
+                    console.error('Task complete error:', err);
+                }
+            } else {
+                alert('Not joined yet!');
+            }
+        }
+
+        // Refer
+        const referLink = `${tg.initDataUnsafe.start_param ? '' : ''}https://t.me/yourbot?start=${user.id}`; // Assume bot start param for refer
+
+        document.getElementById('invite-friend').addEventListener('click', () => {
+            tg.shareUrl(referLink, 'Join Game Vault and earn coins!');
+        });
+
+        document.getElementById('copy-link').addEventListener('click', () => {
+            navigator.clipboard.writeText(referLink);
+            alert('Link copied!');
+        });
+
+        async function loadReferInfo() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/refer-info?telegramId=${user.id}`);
+                const data = await response.json();
+                document.getElementById('total-friends').textContent = `Total Friends: ${data.friends}`;
+                document.getElementById('refer-coins').textContent = `Refer Coins: ${data.coins}`;
+            } catch (err) {
+                console.error('Refer info error:', err);
+            }
+        }
+
+        // Init
+        autoRegister();
+        loadReferInfo();
+
+        // Handle refer if started with param
+        if (tg.initDataUnsafe.start_param) {
+            fetch(`${BACKEND_URL}/set-referrer`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telegramId: user.id, referrerId: tg.initDataUnsafe.start_param })
+            });
+        }
+
+        // Reset ad count at midnight - Client side approximation
+        setInterval(() => {
+            const now = new Date();
+            if (now.getHours() === 0 && now.getMinutes() === 0) {
+                adWatchedToday = 0;
+                updateAdProgress();
+            }
+        }, 60000);
+    </script>
 </body>
 </html>
